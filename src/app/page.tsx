@@ -1,95 +1,64 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import CardDashboard from "@/components/discover/card-dashboard";
+import { Combobox } from "@/components/discover/combobox";
+import ModalSearch from "@/components/discover/modal-search";
+import { Button } from "@/components/ui/button";
+
+const orderList = [
+    {
+        value: "trending",
+        label: "🔥 Trending",
+    },
+    {
+        value: "recently_created",
+        label: "🆕 Recently Created",
+    },
+    {
+        value: "most_loves",
+        label: "😍 Most Loves",
+    },
+    {
+        value: "most_views",
+        label: "👁️ Most Views",
+    },
+];
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore starter templates for Next.js.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  );
+    return (
+        <main>
+            <div className="container mx-auto grid grid-cols-1 gap-4 p-4 text-sm">
+                <div className=" py-8 text-center lg:py-16">
+                    <h3 className="text-3xl font-bold">
+                        Get Insight On{" "}
+                        <span className="text-tremor-brand dark:text-tremor-brand">
+                            Viction
+                        </span>{" "}
+                        Network
+                    </h3>
+                    <p className="text-muted-foreground">
+                        Comprehensive Analysis on Our Advanced Discovery
+                        Dashboard
+                    </p>
+                    <div className="mt-4 flex items-center justify-center gap-1">
+                        <Button variant="outline">Create Now</Button>
+                        <ModalSearch />
+                    </div>
+                </div>
+                <div className="flex items-center justify-end py-4">
+                    <div>
+                        <Combobox
+                            orderList={orderList}
+                            defaultValue="trending"
+                        />
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    {Array(100)
+                        .fill(0)
+                        .map((index) => {
+                            return <CardDashboard key={`dashboard-${index}`} />;
+                        })}
+                </div>
+            </div>
+        </main>
+    );
 }
