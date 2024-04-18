@@ -24,7 +24,7 @@ export const CardDashboard = () => {
                 <p className="mb-2 truncate font-bold">
                     Uniswap V2 and V3 Volumes
                 </p>
-                <p className="text-muted-foreground mb-2 text-xs">
+                <p className="mb-2 text-xs text-muted-foreground">
                     Jan 20, 2024 by{" "}
                     <span className="text-tremor-brand">@akbaridria</span>
                 </p>
@@ -48,7 +48,7 @@ export const CardDashboard = () => {
                         <span>130</span>
                     </p>
                 </div>
-                <p className="text-muted-foreground line-clamp-3 text-xs">
+                <p className="line-clamp-3 text-xs text-muted-foreground">
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                     do eiusmod tempor incididunt ut labore et dolore magna
                     aliqua. Ut enim ad minim veniam, quis nostrud exercitation

@@ -1,7 +1,7 @@
 "use client";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { DashboardIcon, FrameIcon } from "@radix-ui/react-icons";
+import { DashboardIcon } from "@radix-ui/react-icons";
 
 import {
     Command,
@@ -10,8 +10,6 @@ import {
     CommandInput,
     CommandItem,
     CommandList,
-    CommandSeparator,
-    CommandShortcut,
 } from "@/components/ui/command";
 
 export const ModalSearch = () => {
@@ -29,36 +27,48 @@ export const ModalSearch = () => {
                     <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>
                         <CommandGroup heading="Dashboards">
-                            <CommandItem>
-                                <DashboardIcon className="mr-2 h-4 w-4" />
-                                <span>Calendar</span>
-                            </CommandItem>
-                            <CommandItem>
-                                <DashboardIcon className="mr-2 h-4 w-4" />
-                                <span>Search Emoji</span>
-                            </CommandItem>
-                            <CommandItem>
-                                <DashboardIcon className="mr-2 h-4 w-4" />
-                                <span>Launch</span>
-                            </CommandItem>
-                        </CommandGroup>
-                        <CommandSeparator />
-                        <CommandGroup heading="Queries">
-                            <CommandItem>
-                                <FrameIcon className="mr-2 h-4 w-4" />
-                                <span>Profile</span>
-                                <CommandShortcut>⌘P</CommandShortcut>
-                            </CommandItem>
-                            <CommandItem>
-                                <FrameIcon className="mr-2 h-4 w-4" />
-                                <span>Mail</span>
-                                <CommandShortcut>⌘B</CommandShortcut>
-                            </CommandItem>
-                            <CommandItem>
-                                <FrameIcon className="mr-2 h-4 w-4" />
-                                <span>Settings</span>
-                                <CommandShortcut>⌘S</CommandShortcut>
-                            </CommandItem>
+                            {Array(200)
+                                .fill(0)
+                                .map((item, index) => {
+                                    return (
+                                        <CommandItem key={`dashboard-${index}`}>
+                                            <DashboardIcon className="mr-2 h-4 w-4" />
+                                            <div className="flex w-full items-center justify-between">
+                                                <div>
+                                                    <div>
+                                                        Uniswap V2 and V3
+                                                        Volumes
+                                                    </div>
+                                                    <p className="line-clamp-1 text-xs text-muted-foreground">
+                                                        Lorem ipsum dolor sit
+                                                        amet, consectetur
+                                                        adipiscing elit, sed do
+                                                        eiusmod tempor
+                                                        incididunt ut labore et
+                                                        dolore magna aliqua. Ut
+                                                        enim ad minim veniam,
+                                                        quis nostrud
+                                                        exercitation ullamco
+                                                        laboris nisi ut aliquip
+                                                        ex ea commodo consequat.
+                                                        Duis aute irure dolor in
+                                                        reprehenderit in
+                                                        voluptate velit esse
+                                                        cillum dolore eu fugiat
+                                                        nulla pariatur.
+                                                        Excepteur sint occaecat
+                                                        cupidatat non proident,
+                                                        sunt in culpa qui
+                                                        officia deserunt mollit
+                                                        anim id est laborum{" "}
+                                                        {index}
+                                                    </p>
+                                                </div>
+                                                {/* <div>oke gan disana</div> */}
+                                            </div>
+                                        </CommandItem>
+                                    );
+                                })}
                         </CommandGroup>
                     </CommandList>
                 </Command>
