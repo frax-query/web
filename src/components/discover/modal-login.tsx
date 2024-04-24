@@ -1,3 +1,5 @@
+"use client";
+
 import {
     EnvelopeClosedIcon,
     GitHubLogoIcon,
@@ -16,12 +18,16 @@ import {
 import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
+import type { Dispatch, SetStateAction } from "react";
+import { useState } from "react";
 
 export const ModalLogin = () => {
+    const [section, setSection] = useState<string>("login");
+
     return (
-        <Dialog>
+        <Dialog onOpenChange={() => setSection("login")}>
             <DialogTrigger asChild>
-                <Button variant="default" size="sm">
+                <Button variant="default" size="sm" className="max-h-7">
                     Login
                 </Button>
             </DialogTrigger>
@@ -31,9 +37,13 @@ export const ModalLogin = () => {
                         <Logo />
                     </DialogTitle>
                     <DialogDescription className="text-foreground">
-                        {true && <LoginSection />}
-                        {false && <SignUpSection />}
-                        {false && <ForgotPasswordSection />}
+                        {section === "login" && (
+                            <LoginSection setSection={setSection} />
+                        )}
+                        {section === "signup" && <SignUpSection />}
+                        {section === "forgot-password" && (
+                            <ForgotPasswordSection />
+                        )}
                     </DialogDescription>
                 </DialogHeader>
             </DialogContent>
@@ -122,51 +132,61 @@ const SignUpSection = () => {
     );
 };
 
-const LoginSection = () => {
+const LoginSection: React.FC<{
+    setSection: Dispatch<SetStateAction<string>>;
+}> = ({ setSection }) => {
     return (
         <div className="mt-4 space-y-4">
-            <div className="text-base">
-                Sign in and create your analytic dashboard
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-                <Button variant="outline" size="sm" className="space-x-2">
-                    <EnvelopeClosedIcon />
-                    <div>Google</div>
-                </Button>
-                <Button variant="outline" size="sm" className="space-x-2">
-                    <GitHubLogoIcon />
-                    <div>Github</div>
-                </Button>
-                <Button variant="outline" size="sm" className="space-x-2">
-                    <TwitterLogoIcon />
-                    <div>Twitter (X)</div>
-                </Button>
-            </div>
-            <Separator />
-            <div className="space-y-4">
-                <div className="grid w-full items-center gap-1.5">
-                    <Label htmlFor="email">Email</Label>
-                    <Input type="email" id="email" placeholder="Email" />
+            <form action="" className="space-y-4">
+                <div className="text-base">
+                    Sign in and create your analytic dashboard
                 </div>
-                <div className="grid w-full items-center gap-1.5">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                        type="password"
-                        id="password"
-                        placeholder="Password"
-                    />
+                <div className="grid grid-cols-3 gap-2">
+                    <Button variant="outline" size="sm" className="space-x-2">
+                        <EnvelopeClosedIcon />
+                        <div>Google</div>
+                    </Button>
+                    <Button variant="outline" size="sm" className="space-x-2">
+                        <GitHubLogoIcon />
+                        <div>Github</div>
+                    </Button>
+                    <Button variant="outline" size="sm" className="space-x-2">
+                        <TwitterLogoIcon />
+                        <div>Twitter (X)</div>
+                    </Button>
                 </div>
-                <Button variant="default" size="sm" className="w-full">
-                    Login
-                </Button>
-            </div>
-            <div className="space-y-2 text-center">
-                <div className="text-xs underline underline-offset-4">
+                <Separator />
+                <div className="space-y-4">
+                    <div className="grid w-full items-center gap-1.5">
+                        <Label htmlFor="email">Email</Label>
+                        <Input type="email" id="email" placeholder="Email" />
+                    </div>
+                    <div className="grid w-full items-center gap-1.5">
+                        <Label htmlFor="password">Password</Label>
+                        <Input
+                            type="password"
+                            id="password"
+                            placeholder="Password"
+                        />
+                    </div>
+                    <Button variant="default" size="sm" className="w-full">
+                        Login
+                    </Button>
+                </div>
+            </form>
+            <div className="flex flex-col space-y-2 text-center">
+                <button
+                    className="text-xs underline underline-offset-4"
+                    onClick={() => setSection("forgot-password")}
+                >
                     Forgot your password?
-                </div>
-                <div className="text-xs underline underline-offset-4">
+                </button>
+                <button
+                    className="text-xs underline underline-offset-4"
+                    onClick={() => setSection("signup")}
+                >
                     Don't have an account? Sign up
-                </div>
+                </button>
             </div>
         </div>
     );

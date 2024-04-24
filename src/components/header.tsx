@@ -15,7 +15,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 export const Header = () => {
     return (
         <div className="sticky top-0 z-40 border-b border-zinc-200 backdrop-blur-lg dark:border-zinc-800">
-            <div className="container mx-auto">
+            <div className="mx-auto max-w-[1800px] px-4">
                 <div className="flex items-center justify-between py-3">
                     <div className="flex items-center gap-8">
                         <Logo />

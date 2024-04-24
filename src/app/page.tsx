@@ -25,7 +25,7 @@ const orderList = [
 export default function Home() {
     return (
         <main>
-            <div className="container mx-auto grid grid-cols-1 gap-4 p-4 text-sm">
+            <div className="mx-auto grid max-w-[1800px] grid-cols-1 gap-4 p-4 text-sm">
                 <div className=" py-8 text-center lg:py-16">
                     <h3 className="text-3xl font-bold">
                         Get Insight On{" "}
