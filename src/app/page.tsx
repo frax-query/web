@@ -27,14 +27,14 @@ export default function Home() {
         <main>
             <div className="mx-auto grid max-w-[1800px] grid-cols-1 gap-4 p-4 text-sm">
                 <div className=" py-8 text-center lg:py-16">
-                    <h3 className="text-3xl font-bold">
+                    <h3 className="text-4xl font-bold">
                         Get Insight On{" "}
                         <span className="text-tremor-brand dark:text-tremor-brand">
                             Viction
                         </span>{" "}
                         Network
                     </h3>
-                    <p className="text-muted-foreground">
+                    <p className="text-lg text-muted-foreground">
                         Comprehensive Analysis on Our Advanced Discovery
                         Dashboard
                     </p>

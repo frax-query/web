@@ -18,12 +18,23 @@ import {
 } from "lucide-react";
 import { RiSearchLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Editor from "@monaco-editor/react";
 import { useTheme } from "next-themes";
+// import { createClient } from "@/lib/supabase/client";
 
-export default function Test() {
+export default function Query() {
+    useEffect(() => {
+        // (async () => {
+        //     const client = createClient();
+        //     const { data, error } = await client.auth.signUp({
+        //         email: "example@email.com",
+        //         password: "example-password",
+        //     });
+        //     console.log(data, error);
+        // })();
+    }, []);
     return (
         <div className="mx-auto h-[calc(100vh_-_65px)] max-w-[1800px]">
             <div className="flex h-full text-sm">
