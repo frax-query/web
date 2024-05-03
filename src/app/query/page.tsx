@@ -12,29 +12,29 @@ import {
     DatabaseZapIcon,
     PackageOpenIcon,
     SquarePlusIcon,
+    SquareTerminalIcon,
     TableIcon,
     Trash2Icon,
     Type,
 } from "lucide-react";
 import { RiSearchLine } from "@remixicon/react";
 import { Button } from "@/components/ui/button";
-import React, { useEffect, useState } from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import Editor from "@monaco-editor/react";
-import { useTheme } from "next-themes";
-// import { createClient } from "@/lib/supabase/client";
+import React, { useState } from "react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { MonacoEditor } from "@/components/code-editor";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Separator } from "@/components/ui/separator";
+import { schema_tables } from "@/components/sql";
+import { Badge } from "@/components/ui/badge";
 
 export default function Query() {
-    useEffect(() => {
-        // (async () => {
-        //     const client = createClient();
-        //     const { data, error } = await client.auth.signUp({
-        //         email: "example@email.com",
-        //         password: "example-password",
-        //     });
-        //     console.log(data, error);
-        // })();
-    }, []);
+    const [formatCode, setFormatCode] = useState(() => () => {});
+
     return (
         <div className="mx-auto h-[calc(100vh_-_65px)] max-w-[1800px]">
             <div className="flex h-full text-sm">
@@ -53,19 +53,56 @@ export default function Query() {
                     <ResizablePanelGroup direction="vertical">
                         <div className="flex items-center justify-between border-b p-4">
                             <div>ini title</div>
-                            <div className="flex items-center gap-2">
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
-                                >
-                                    <AlignLeftIcon size={14} />
-                                </Button>
+                            <div className="flex h-full items-center gap-2">
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-6 w-6"
+                                                onClick={formatCode}
+                                            >
+                                                <AlignLeftIcon size={16} />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent className="bg-accent">
+                                            Prettify SQL
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-6 w-6"
+                                                onClick={formatCode}
+                                            >
+                                                <SquareTerminalIcon size={16} />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent className="bg-accent">
+                                            SQL Syntax
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                                <Separator
+                                    orientation="vertical"
+                                    className="mr-2"
+                                />
                                 <Button className="h-6 text-sm">Run</Button>
+                                <Button
+                                    className="h-6 text-sm"
+                                    variant="outline"
+                                >
+                                    Save
+                                </Button>
                             </div>
                         </div>
                         <ResizablePanel>
-                            <MonacoEditor />
+                            <MonacoEditor setFormatCode={setFormatCode} />
                         </ResizablePanel>
                         <ResizableHandle withHandle={true} />
                         <ResizablePanel>
@@ -80,32 +117,28 @@ export default function Query() {
 
 const ResultAndChartSection = () => {
     return (
-        <div>
-            <div className="flex items-center border-b px-4 py-3">
-                {Array.from(Array(5).keys()).map((item) => {
-                    return (
-                        <button
-                            className={`truncate whitespace-nowrap rounded-full transition-all hover:text-foreground ${item === 0 ? "bg-muted text-foreground" : "text-muted-foreground"} px-4 py-1`}
-                            key={item}
-                        >
-                            test 123123
-                        </button>
-                    );
-                })}
+        <div className="h-full">
+            <ScrollArea className="grid w-full whitespace-nowrap rounded-md border-b">
+                <div className="flex w-max items-center px-4 py-3">
+                    {Array.from(Array(4).keys()).map((item) => {
+                        return (
+                            <button
+                                className={`truncate whitespace-nowrap rounded-md transition-all hover:text-foreground ${item === 0 ? "bg-muted text-foreground" : "text-muted-foreground"} w-40 shrink-0 px-4 py-1`}
+                                key={item}
+                            >
+                                test 123123
+                            </button>
+                        );
+                    })}
+                </div>
+                <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+            <div className="h-full">
+                <div className="bg-accent p-4 text-muted-foreground">
+                    Click <Badge variant="default">Run</Badge> to execute query
+                </div>
             </div>
-            <div className="mt-4">this is the result</div>
         </div>
-    );
-};
-
-const MonacoEditor = () => {
-    const { theme } = useTheme();
-    return (
-        <Editor
-            defaultLanguage="sql"
-            defaultValue=""
-            theme={`${theme === "light" ? "" : "vs-dark"}`}
-        />
     );
 };
 
@@ -114,22 +147,40 @@ const DatabaseSchema = () => {
         <div className="h-full space-y-1 p-4">
             <div className="text-muted-foreground">Database Schema</div>
             <ScrollArea className="h-[calc(100%_-_20px)] space-y-2 py-1">
-                <div className="flex items-center gap-2">
-                    <DatabaseZapIcon size={14} />
-                    <div>viction_mainnet</div>
-                </div>
-                <div>
-                    <TableSchema />
-                    <TableSchema />
-                    <TableSchema />
-                    <TableSchema />
-                </div>
+                {Object.keys(schema_tables).map((item) => {
+                    return (
+                        <>
+                            <div className="flex items-center gap-2">
+                                <DatabaseZapIcon size={14} />
+                                <div>{item}</div>
+                            </div>
+                            <div>
+                                {Object.keys(schema_tables[item]).map(
+                                    (item2) => {
+                                        return (
+                                            <TableSchema
+                                                key={item2}
+                                                tableName={item2}
+                                                data={
+                                                    schema_tables[item][item2]
+                                                }
+                                            />
+                                        );
+                                    }
+                                )}
+                            </div>
+                        </>
+                    );
+                })}
             </ScrollArea>
         </div>
     );
 };
 
-const TableSchema = () => {
+const TableSchema: React.FC<{ data: string[]; tableName: string }> = ({
+    data,
+    tableName,
+}) => {
     const [open, setOpen] = useState(false);
     return (
         <>
@@ -143,37 +194,21 @@ const TableSchema = () => {
                 />
                 <div className="flex items-center gap-1">
                     <TableIcon size={14} />
-                    <div>transactions</div>
+                    <div>{tableName}</div>
                 </div>
             </div>
             <div className={`${open ? "" : "hidden"}`}>
-                <div className="flex items-center gap-2 px-2 py-1 pl-14">
-                    <span className="relative flex h-3 w-3">
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-foreground opacity-75"></span>
-                        <span className="relative inline-flex h-3 w-3 rounded-full bg-accent"></span>
-                    </span>
-                    <span className="text-muted-foreground">loading...</span>
-                </div>
-                <div className="flex items-center gap-2 px-2 py-1 pl-14 hover:bg-accent ">
-                    <Type size={14} />
-                    <div>transaction_index (String)</div>
-                </div>
-                <div className="flex items-center gap-2 px-2 py-1 pl-14 hover:bg-accent">
-                    <Type size={14} />
-                    <div>transaction_index (String)</div>
-                </div>
-                <div className="flex items-center gap-2 px-2 py-1 pl-14 hover:bg-accent">
-                    <Type size={14} />
-                    <div>transaction_index (String)</div>
-                </div>
-                <div className="flex items-center gap-2 px-2 py-1 pl-14 hover:bg-accent">
-                    <Type size={14} />
-                    <div>transaction_index (String)</div>
-                </div>
-                <div className="flex items-center gap-2 px-2 py-1 pl-14 hover:bg-accent">
-                    <Type size={14} />
-                    <div>transaction_index (String)</div>
-                </div>
+                {data.map((item) => {
+                    return (
+                        <div
+                            className="flex items-center gap-2 px-2 py-1 pl-14 hover:bg-accent "
+                            key={item + " " + tableName}
+                        >
+                            <Type size={14} />
+                            <div>{item}</div>
+                        </div>
+                    );
+                })}
             </div>
         </>
     );

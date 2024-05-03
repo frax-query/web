@@ -53,6 +53,23 @@ export async function updateSession(request: NextRequest) {
             },
         }
     );
-    await supabase.auth.getUser();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    if (user) {
+        response.cookies.set({
+            name: "user",
+            value: JSON.stringify(user),
+            path: "/",
+        });
+    } else {
+        const isHome = request.nextUrl.pathname === "/";
+        const response = isHome
+            ? NextResponse.next()
+            : NextResponse.redirect(new URL("/", request.url));
+        response.cookies.delete("user");
+        return response;
+    }
     return response;
 }

@@ -1,7 +1,10 @@
+"use client";
+
 import CardDashboard from "@/components/discover/card-dashboard";
 import { Combobox } from "@/components/discover/combobox";
 import ModalSearch from "@/components/discover/modal-search";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/hooks/store/authStore";
 
 const orderList = [
     {
@@ -23,6 +26,8 @@ const orderList = [
 ];
 
 export default function Home() {
+    const user = useAuthStore((state) => state.user);
+
     return (
         <main>
             <div className="mx-auto grid max-w-[1800px] grid-cols-1 gap-4 p-4 text-sm">
@@ -39,7 +44,7 @@ export default function Home() {
                         Dashboard
                     </p>
                     <div className="mt-4 flex items-center justify-center gap-1">
-                        <Button variant="outline">Create Now</Button>
+                        {user && <Button variant="outline">Query now</Button>}
                         <ModalSearch />
                     </div>
                 </div>

@@ -16,32 +16,44 @@ import { useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "./ui/use-toast";
 import { useAuthStore } from "@/hooks/store/authStore";
-
-const client = createClient();
+import * as Cookies from "js-cookie";
+import { usePathname } from "next/navigation";
 
 export const Header = () => {
     const setUser = useAuthStore((state) => state.setUser);
     const user = useAuthStore((state) => state.user);
+    const pathname = usePathname();
+
     useEffect(() => {
         (async () => {
-            const {
-                data: { user },
-            } = await client.auth.getUser();
-            setUser(user);
+            const user = Cookies.default.get("user");
+            setUser(user ? JSON.parse(user) : null);
         })();
     }, []);
     return (
-        <div className="sticky top-0 z-40 h-[64px] border-b border-zinc-200 backdrop-blur-lg dark:border-zinc-800">
+        <div className="sticky top-0 z-40 h-[64px] border-b border-zinc-200 bg-background dark:border-zinc-800">
             <div className="mx-auto h-full max-w-[1800px] px-4">
                 <div className="flex h-full items-center justify-between">
                     <div className="flex items-center gap-8">
                         <Link href={"/"}>
                             <Logo />
                         </Link>
-                        {/* <div className="flex items-center gap-8 text-sm text-tremor-content-subtle dark:text-tremor-content-subtle">
-                            <div className="text-tremor-brand">Discover</div>
-                            <div>Create</div>
-                        </div> */}
+                        {user && (
+                            <div className="flex items-center gap-8 text-sm text-tremor-content-subtle dark:text-tremor-content-subtle">
+                                <Link
+                                    href={"/query"}
+                                    className={`${pathname.split("/")[1] === "query" ? "text-tremor-brand" : "text-foreground"} transition-all`}
+                                >
+                                    Query
+                                </Link>
+                                <Link
+                                    href={"/dashboard"}
+                                    className={`${pathname.split("/")[1] === "dashboard" ? "text-tremor-brand" : "text-foreground"} transition-all`}
+                                >
+                                    Dashboard
+                                </Link>
+                            </div>
+                        )}
                     </div>
                     <div className="flex items-center gap-4 text-sm">
                         {!!user && <ProfileAccount />}

@@ -14,7 +14,7 @@ import { Separator } from "../ui/separator";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import type { Dispatch, SetStateAction } from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useCountdown, useMediaQuery } from "usehooks-ts";
 import { ZodError, z } from "zod";
 import { ErrorMessage, Formik } from "formik";
@@ -38,12 +38,17 @@ import { PulseLoading } from "../pulse-loading";
 import { useAuthStore } from "@/hooks/store/authStore";
 
 export const ModalLogin = () => {
-    const [section, setSection] = useState<string>("verify");
+    const [section, setSection] = useState<string>("login");
     const [email, setEmail] = useState<string>("");
     const matches = useMediaQuery("(min-width: 768px)");
     if (matches) {
         return (
-            <Dialog onOpenChange={() => setSection("verify")}>
+            <Dialog
+                onOpenChange={() => {
+                    setSection("login");
+                    setEmail("");
+                }}
+            >
                 <DialogTrigger asChild>
                     <Button variant="default" size="sm" className="max-h-7">
                         Login
@@ -65,10 +70,22 @@ export const ModalLogin = () => {
                                 />
                             )}
                             {section === "forgot-password" && (
-                                <ForgotPasswordSection />
+                                <ForgotPasswordSection
+                                    setSection={setSection}
+                                    setEmail={setEmail}
+                                />
                             )}
                             {section === "verify" && (
                                 <VerifySignUp email={email} />
+                            )}
+                            {section === "verify-password" && (
+                                <VerifyPasswordRecovery
+                                    email={email}
+                                    setSection={setSection}
+                                />
+                            )}
+                            {section === "change-password" && (
+                                <ChangePassword setSection={setSection} />
                             )}
                         </DialogDescription>
                     </DialogHeader>
@@ -99,10 +116,22 @@ export const ModalLogin = () => {
                                 />
                             )}
                             {section === "forgot-password" && (
-                                <ForgotPasswordSection />
+                                <ForgotPasswordSection
+                                    setSection={setSection}
+                                    setEmail={setEmail}
+                                />
                             )}
                             {section === "verify" && (
                                 <VerifySignUp email={email} />
+                            )}
+                            {section === "verify-password" && (
+                                <VerifyPasswordRecovery
+                                    email={email}
+                                    setSection={setSection}
+                                />
+                            )}
+                            {section === "change-password" && (
+                                <ChangePassword setSection={setSection} />
                             )}
                         </DrawerDescription>
                     </DrawerHeader>
@@ -112,7 +141,41 @@ export const ModalLogin = () => {
     }
 };
 
-const ForgotPasswordSection = () => {
+const ForgotPasswordSection: React.FC<{
+    setSection: Dispatch<SetStateAction<string>>;
+    setEmail: Dispatch<SetStateAction<string>>;
+}> = ({ setSection, setEmail }) => {
+    const [loading, setLoading] = useState(false);
+    const { toast } = useToast();
+    const ValidationSchema = z.object({
+        email: z.string().email("Invalid email address"),
+    });
+
+    type FormValues = z.infer<typeof ValidationSchema>;
+    const validateForm = (values: FormValues) => {
+        try {
+            ValidationSchema.parse(values);
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return error.formErrors.fieldErrors;
+            }
+        }
+    };
+    const handleResetPassword = async (values: FormValues) => {
+        setLoading(true);
+        const client = createClient();
+        const { error } = await client.auth.resetPasswordForEmail(values.email);
+        if (error) {
+            toast({
+                variant: "destructive",
+                title: error.code,
+                description: error.message,
+            });
+            return;
+        }
+        setEmail(values.email);
+        setSection("verify-password");
+    };
     return (
         <div className="mt-4 space-y-4">
             <div>
@@ -124,15 +187,41 @@ const ForgotPasswordSection = () => {
                     your email address and we'll help you get back in.
                 </div>
             </div>
-            <div className="space-y-4">
-                <div className="grid w-full items-center gap-1.5">
-                    <Label htmlFor="email">Email</Label>
-                    <Input type="email" id="email" placeholder="Email" />
-                </div>
-                <Button variant="default" size="sm" className="w-full">
-                    Reset Password
-                </Button>
-            </div>
+            <Formik
+                initialValues={{
+                    email: "",
+                }}
+                validate={validateForm}
+                onSubmit={(values) => {
+                    handleResetPassword(values);
+                }}
+            >
+                {({ values, handleChange, handleBlur, handleSubmit }) => (
+                    <form className="space-y-4" onSubmit={handleSubmit}>
+                        <div className="grid w-full items-center gap-1.5">
+                            <Label htmlFor="email">Email</Label>
+                            <Input
+                                type="email"
+                                id="email"
+                                placeholder="Email"
+                                disabled={loading}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.email}
+                            />
+                        </div>
+                        <Button
+                            variant="default"
+                            size="sm"
+                            className="w-full gap-2"
+                            disabled={loading}
+                        >
+                            {loading && <PulseLoading />}
+                            Reset Password
+                        </Button>
+                    </form>
+                )}
+            </Formik>
         </div>
     );
 };
@@ -586,6 +675,246 @@ const VerifySignUp: React.FC<{ email: string }> = ({ email }) => {
                 {loading && <PulseLoading />}
                 Submit
             </Button>
+        </div>
+    );
+};
+
+const VerifyPasswordRecovery: React.FC<{
+    email: string;
+    setSection: Dispatch<SetStateAction<string>>;
+}> = ({ email, setSection }) => {
+    const [otp, setOtp] = useState("");
+    const [loading, setLoading] = useState(false);
+    const { toast } = useToast();
+    const [count, { startCountdown, resetCountdown, stopCountdown }] =
+        useCountdown({
+            countStart: 60,
+            intervalMs: 1000,
+        });
+    useEffect(() => {
+        (() => {
+            startCountdown();
+        })();
+    }, []);
+    useEffect(() => {
+        if (count === 0) {
+            stopCountdown();
+        }
+    }, [count]);
+    const resendOtp = async (email: string) => {
+        const client = createClient();
+        const { error } = await client.auth.resetPasswordForEmail(email);
+        if (error) {
+            toast({
+                variant: "destructive",
+                title: error.code,
+                description: error.message,
+            });
+            return;
+        }
+        toast({
+            variant: "default",
+            title: "Otp sent!",
+            description: "We have send you the otp",
+        });
+        resetCountdown();
+        startCountdown();
+    };
+    const handleOtp = async (otp: string) => {
+        setLoading(true);
+        const client = createClient();
+        const { error } = await client.auth.verifyOtp({
+            email: email,
+            token: otp,
+            type: "email",
+        });
+        if (error) {
+            toast({
+                variant: "destructive",
+                title: error.name,
+                description: error.message,
+            });
+            setLoading(false);
+            return;
+        }
+        setSection("change-password");
+    };
+    return (
+        <div className="mt-4 space-y-4">
+            <div className="text-xl font-bold tracking-tight">
+                OTP Verification
+            </div>
+            <div>
+                We have sent an One Time Password (OTP) to your email address
+            </div>
+            <InputOTP
+                maxLength={6}
+                onChange={(e) => setOtp(e)}
+                disabled={loading}
+            >
+                <InputOTPGroup>
+                    <InputOTPSlot index={0} />
+                    <InputOTPSlot index={1} />
+                    <InputOTPSlot index={2} />
+                </InputOTPGroup>
+                <InputOTPSeparator />
+                <InputOTPGroup>
+                    <InputOTPSlot index={3} />
+                    <InputOTPSlot index={4} />
+                    <InputOTPSlot index={5} />
+                </InputOTPGroup>
+            </InputOTP>
+            <div className="text-muted-foreground">
+                Didn't receive the OTP ?{" "}
+                <span
+                    className={`cursor-pointer ${count === 0 ? "text-foreground" : "text-muted-foreground"} underline underline-offset-4`}
+                    onClick={() => count === 0 && resendOtp(email)}
+                >
+                    Resend
+                </span>{" "}
+                in {String(Math.floor(count / 60)).padStart(2, "0")}:
+                {String(count % 60).padStart(2, "0")}
+            </div>
+            <Button
+                className="w-full gap-2"
+                variant="default"
+                size="sm"
+                onClick={() => handleOtp(otp)}
+                disabled={loading}
+            >
+                {loading && <PulseLoading />}
+                Submit
+            </Button>
+        </div>
+    );
+};
+
+const ChangePassword: React.FC<{
+    setSection: Dispatch<SetStateAction<string>>;
+}> = ({ setSection }) => {
+    const [loading, setLoading] = useState(false);
+    const { toast } = useToast();
+    const ValidationSchema = z
+        .object({
+            new_password: z.string().min(8, "Password is too short"),
+            confirm_password: z.string(),
+        })
+        .refine(
+            (values) => {
+                return values.new_password === values.confirm_password;
+            },
+            {
+                message: "Passwords must match!",
+                path: ["confirm_password"],
+            }
+        );
+
+    type FormValues = z.infer<typeof ValidationSchema>;
+    const validateForm = (values: FormValues) => {
+        try {
+            ValidationSchema.parse(values);
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return error.formErrors.fieldErrors;
+            }
+        }
+    };
+    const handleChangePassword = async (values: FormValues) => {
+        setLoading(true);
+        const client = createClient();
+        const { error } = await client.auth.updateUser({
+            password: values.new_password,
+        });
+        if (error) {
+            toast({
+                variant: "destructive",
+                title: error.code,
+                description: error.message,
+            });
+            setLoading(false);
+            return;
+        }
+        toast({
+            variant: "default",
+            title: "Password Reset Successful",
+            description: "You can now log in with your new password.",
+        });
+        setSection("login");
+        window.location.reload();
+    };
+
+    return (
+        <div className="mt-4 space-y-4">
+            <div className="text-xl font-bold tracking-tight">
+                Reset Password
+            </div>
+            <div>
+                We understand you might have forgotten your password. No
+                worries, resetting it is easy!
+            </div>
+            <Formik
+                initialValues={{
+                    new_password: "",
+                    confirm_password: "",
+                }}
+                validate={validateForm}
+                onSubmit={(values) => {
+                    handleChangePassword(values);
+                }}
+            >
+                {({ values, handleChange, handleBlur, handleSubmit }) => (
+                    <form className="space-y-4" onSubmit={handleSubmit}>
+                        <div className="grid w-full items-center gap-1.5">
+                            <Label htmlFor="password">Password</Label>
+                            <Input
+                                type="password"
+                                id="new_password"
+                                name="new_password"
+                                placeholder="Password"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.new_password}
+                                disabled={loading}
+                            />
+                            <ErrorMessage
+                                name="password"
+                                component="div"
+                                className="text-sm text-red-600"
+                            />
+                        </div>
+                        <div className="grid w-full items-center gap-1.5">
+                            <Label htmlFor="confirm_password">
+                                Confirm Password
+                            </Label>
+                            <Input
+                                type="password"
+                                id="confirm_password"
+                                name="confirm_password"
+                                placeholder="Confirm password"
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                value={values.confirm_password}
+                                disabled={loading}
+                            />
+                            <ErrorMessage
+                                name="confirm_password"
+                                component="div"
+                                className="text-sm text-red-600"
+                            />
+                        </div>
+                        <Button
+                            variant="default"
+                            size="sm"
+                            className="w-full gap-2"
+                            type="submit"
+                            disabled={loading}
+                        >
+                            {loading && <PulseLoading />}
+                            Sign Up
+                        </Button>
+                    </form>
+                )}
+            </Formik>
         </div>
     );
 };
