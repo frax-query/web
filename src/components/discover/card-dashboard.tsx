@@ -7,13 +7,12 @@ import {
     CardHeader,
 } from "@/components/ui/card";
 
-import { Icon } from "@tremor/react";
-import { RiHeart3Fill, RiEye2Fill, RiArrowRightLine } from "@remixicon/react";
+import { ArrowRight, EyeIcon, HeartIcon } from "lucide-react";
 
 export const CardDashboard = () => {
     return (
         <Card>
-            <CardHeader className="overflow-hidden rounded-t-lg bg-tremor-brand p-0">
+            <CardHeader className="overflow-hidden rounded-t-lg p-0">
                 <img
                     src="./logo.png"
                     alt=""
@@ -26,25 +25,18 @@ export const CardDashboard = () => {
                 </p>
                 <p className="mb-2 text-xs text-muted-foreground">
                     Jan 20, 2024 by{" "}
-                    <span className="text-tremor-brand">@akbaridria</span>
+                    <span className="text-primary">@akbaridria</span>
                 </p>
                 <div className="mb-2 flex items-center gap-2">
                     <p className="flex items-center gap-1 text-xs">
-                        <Icon
-                            icon={RiHeart3Fill}
-                            variant="simple"
-                            size="xs"
-                            className="p-0"
+                        <HeartIcon
+                            size={12}
+                            className="fill-primary stroke-primary"
                         />
                         <span>130</span>
                     </p>
                     <p className="flex items-center gap-1 text-xs">
-                        <Icon
-                            icon={RiEye2Fill}
-                            variant="simple"
-                            size="xs"
-                            className="p-0"
-                        />
+                        <EyeIcon size={12} className="stroke-primary" />
                         <span>130</span>
                     </p>
                 </div>
@@ -60,9 +52,9 @@ export const CardDashboard = () => {
                 </p>
             </CardContent>
             <CardFooter className="p-4">
-                <div className="flex items-center text-tremor-brand">
+                <div className="flex items-center gap-1 text-primary">
                     Read More
-                    <Icon icon={RiArrowRightLine} variant="simple" size="sm" />
+                    <ArrowRight size={18} />
                 </div>
             </CardFooter>
         </Card>

@@ -34,7 +34,7 @@ export default function Home() {
                 <div className=" py-8 text-center lg:py-16">
                     <h3 className="text-4xl font-bold">
                         Get Insight On{" "}
-                        <span className="text-tremor-brand dark:text-tremor-brand">
+                        <span className="text-primary dark:text-primary">
                             Viction
                         </span>{" "}
                         Network

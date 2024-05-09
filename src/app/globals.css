@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import "react-data-grid/lib/styles.css";
+
 @layer base {
     :root {
         --background: 0 0% 100%;
@@ -104,4 +106,14 @@
     background-origin: content-box;
     box-sizing: border-box;
     cursor: se-resize;
+}
+
+[contenteditable] {
+    outline: 0px solid transparent;
+}
+
+.rdg-cell {
+    font-size: 12px !important;
+    outline: none !important;
+    border: 0.5px solid hsl(var(--border)) !important;
 }

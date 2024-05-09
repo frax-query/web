@@ -15,7 +15,8 @@ loader.config({
 
 export const MonacoEditor: React.FC<{
     setFormatCode: React.Dispatch<React.SetStateAction<() => void>>;
-}> = ({ setFormatCode }) => {
+    setQuery: React.Dispatch<React.SetStateAction<string | undefined>>;
+}> = ({ setFormatCode, setQuery }) => {
     const { theme } = useTheme();
     const [isClient, setIsClient] = useState(false);
     useEffect(() => {
@@ -166,6 +167,16 @@ export const MonacoEditor: React.FC<{
                 };
             },
         });
+        monaco?.editor.addKeybindingRules([
+            {
+                keybinding: monaco.KeyMod.CtrlCmd + monaco.KeyCode.Slash,
+                command: "editor.action.commentLine",
+                when: "editorTextFocus && !editorReadonly",
+            },
+        ]);
+        monaco?.languages.setLanguageConfiguration("sql1", {
+            comments: { blockComment: ["/*", "*/"], lineComment: "--" },
+        });
     }, [monaco]);
     const handleEditorDidMount: OnMount = (editor) => {
         setFormatCode(
@@ -177,10 +188,12 @@ export const MonacoEditor: React.FC<{
     return (
         <Editor
             defaultLanguage="sql1"
-            defaultValue="select * from viction_mainnet.log_events"
+            defaultValue="-- select * from viction_mainnet.log_events limit 10"
             language="sql1"
             theme={`${theme === "light" ? "" : "vs-dark"}`}
             onMount={handleEditorDidMount}
+            options={{ minimap: { enabled: false } }}
+            onChange={(q) => setQuery(q)}
         />
     );
 };

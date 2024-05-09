@@ -39,16 +39,16 @@ export const Header = () => {
                             <Logo />
                         </Link>
                         {user && (
-                            <div className="flex items-center gap-8 text-sm text-tremor-content-subtle dark:text-tremor-content-subtle">
+                            <div className="flex items-center gap-8 text-sm">
                                 <Link
                                     href={"/query"}
-                                    className={`${pathname.split("/")[1] === "query" ? "text-tremor-brand" : "text-foreground"} transition-all`}
+                                    className={`${pathname.split("/")[1] === "query" ? "text-primary" : "text-foreground"} transition-all`}
                                 >
                                     Query
                                 </Link>
                                 <Link
                                     href={"/dashboard"}
-                                    className={`${pathname.split("/")[1] === "dashboard" ? "text-tremor-brand" : "text-foreground"} transition-all`}
+                                    className={`${pathname.split("/")[1] === "dashboard" ? "text-primary" : "text-foreground"} transition-all`}
                                 >
                                     Dashboard
                                 </Link>
