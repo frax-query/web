@@ -23,7 +23,7 @@ export async function POST(req: NextRequest): Promise<
         {
             message: !error ? "" : error.message,
             data: data,
-            isError: !error ? false : true,
+            isError: !error ? true : false,
         },
         {
             status: 200,
