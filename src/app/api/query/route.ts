@@ -6,7 +6,7 @@ import type { ResponseData, BodyRequestGetQuery, QueryResult } from "@/types";
 
 export async function POST(
     req: NextRequest
-): Promise<NextResponse<ResponseData>> {
+): Promise<NextResponse<ResponseData<QueryResult | null>>> {
     let result: QueryResult = [];
     let message: string = "Unknown error";
     let isError: boolean = true;
@@ -23,9 +23,11 @@ export async function POST(
         result = await raw.json();
         isError = false;
         message = "";
-    } catch (error) {
-        if (error instanceof ClickHouseError) message = error.message;
-        else message = error as string;
+    } catch (err) {
+        if (err instanceof ClickHouseError) message = err.message;
+        else if (typeof err === "string") message = err;
+        else if (err instanceof Error) message = err.message;
+        else message = "unknown error" as string;
     }
     return NextResponse.json(
         {

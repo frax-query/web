@@ -2,33 +2,14 @@
 
 import type { QueryResult, ICharts } from "@/types";
 import { PieChartIcon, X, PlusCircleIcon } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "../ui/button";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import DataGrid from "react-data-grid";
-import * as echarts from "echarts/core";
-import {
-    TitleComponent,
-    TooltipComponent,
-    LegendComponent,
-} from "echarts/components";
-import { BarChart, LineChart } from "echarts/charts";
-import { UniversalTransition } from "echarts/features";
-import { CanvasRenderer } from "echarts/renderers";
 import { Badge } from "../ui/badge";
 import { ChartConfig } from "./ChartConfig";
 import { useTheme } from "next-themes";
 import { defaultConfigChart } from "@/lib/utils";
-
-echarts.use([
-    TitleComponent,
-    TooltipComponent,
-    LegendComponent,
-    BarChart,
-    LineChart,
-    CanvasRenderer,
-    UniversalTransition,
-]);
 
 export const ResultAndChartSection: React.FC<{
     error: string;
@@ -70,7 +51,11 @@ export const ResultAndChartSection: React.FC<{
         }
     }, [result]);
 
-    const addChart = () => {
+    useEffect(() => {
+        console.log(listTabs);
+    }, [listTabs]);
+
+    const addChart = useCallback(() => {
         setListTabs((prev) => [
             ...prev,
             {
@@ -78,8 +63,20 @@ export const ResultAndChartSection: React.FC<{
                 config: JSON.parse(JSON.stringify(defaultConfigChart)),
             },
         ]);
-        setActiveTab(listTabs.length + 1);
-    };
+        setActiveTab((prev) => prev + 1);
+    }, [setListTabs, setActiveTab, listTabs]);
+
+    const removeChart = useCallback(
+        (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: number) => {
+            e.stopPropagation();
+            setListTabs((prev) => {
+                const newArr = [...prev];
+                return newArr.filter((x) => x.id !== id);
+            });
+            if (activeTab === id) setActiveTab((prev) => prev - 1);
+        },
+        [setListTabs, setActiveTab]
+    );
     return (
         <div className="h-full">
             <ScrollArea className="grid w-full whitespace-nowrap border-b">
@@ -100,7 +97,7 @@ export const ResultAndChartSection: React.FC<{
                                 <div className="flex flex-1 items-center gap-1">
                                     <PieChartIcon size={14} />
                                     <div className="w-40 truncate whitespace-nowrap">
-                                        Add chart Add chart Add chart Add chart
+                                        {item.config.title.value}
                                     </div>
                                 </div>
                                 <Button
@@ -109,7 +106,7 @@ export const ResultAndChartSection: React.FC<{
                                     className="h-5 w-5 flex-none"
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        console.log("ini disini");
+                                        removeChart(e, item.id);
                                     }}
                                 >
                                     <X size={14} />
@@ -163,6 +160,7 @@ export const ResultAndChartSection: React.FC<{
                 )}
             </div>
             <ChartConfig
+                key={listTabs.findIndex((x) => x.id === activeTab)}
                 columns={columns}
                 data={result}
                 config={

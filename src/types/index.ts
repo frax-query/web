@@ -6,8 +6,8 @@ type DynamicObject = {
 
 export type QueryResult = DynamicObject[];
 
-export type ResponseData = {
-    data: QueryResult | null;
+export type ResponseData<T> = {
+    data: T;
     message: string;
     isError: boolean;
 };
@@ -34,12 +34,14 @@ import type {
     PieSeriesOption,
 } from "echarts/charts";
 import type {
+    DatasetComponentOption,
     LegendComponentOption,
     TitleComponentOption,
     TooltipComponentOption,
 } from "echarts/components";
 
 export type EChartsOption = echarts.ComposeOption<
+    | DatasetComponentOption
     | TitleComponentOption
     | TooltipComponentOption
     | LegendComponentOption
@@ -53,23 +55,28 @@ export interface ICharts {
     xaxis: {
         value: string;
         show: boolean;
-        type: "value" | "category" | "time";
+        type: "category" | "time";
     };
     yaxis: {
         value: string;
         show: boolean;
-        type: "value" | "category" | "time";
-        curencySymbol: "$";
+        type: "value";
+        formatType: "number" | "percentage" | "usd";
         format: "standard" | "compact";
-        formatter: (value: string | number | null) => string;
+        formatter:
+            | ((value: string | number | null) => string | number | null)
+            | undefined;
     };
     y2axis: {
         value: string;
         show: boolean;
-        type: "value" | "category" | "time";
-        curencySymbol: "$";
+        type: "value";
+        formatType: "number" | "percentage" | "usd";
         format: "standard" | "compact";
-        formatter: (value: string | number | null) => string;
+        formatter:
+            | ((value: string | number | null) => string | number | null)
+            | undefined;
+        chart: IAllCharts;
     };
     group: {
         value: string;
@@ -81,8 +88,25 @@ export interface ICharts {
     title: {
         value: string;
         position: "center" | "left" | "right";
+        show: boolean;
+    };
+    label: {
+        show: boolean;
+        formatter:
+            | ((params: {
+                  name: string;
+                  value: number | string | null;
+              }) => string | number | null)
+            | undefined;
     };
     selectedChart: IAllCharts;
+    metricConfig: {
+        value: string;
+        compareValue: string;
+        textCompare: string;
+    };
+    stacked: boolean;
+    normalized: boolean;
 }
 
 export type IDataSeries = echarts.ComposeOption<
@@ -96,4 +120,10 @@ export interface IListCharts {
     value: IAllCharts;
     name: string;
     icon: JSX.Element;
+}
+
+export interface IDataMetrics {
+    value: number | string | null | undefined;
+    textValue: string;
+    compareValue: number | string | null | undefined;
 }

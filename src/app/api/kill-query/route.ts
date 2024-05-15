@@ -6,7 +6,7 @@ import type { ResponseData, BodyRequestGetQuery, QueryResult } from "@/types";
 
 export async function POST(
     req: NextRequest
-): Promise<NextResponse<ResponseData>> {
+): Promise<NextResponse<ResponseData<QueryResult | null>>> {
     const result: QueryResult = [];
     let message: string = "Unknown error";
     let isError: boolean = true;

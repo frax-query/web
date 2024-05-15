@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 
 export default function Dashboard() {
     return (
-        <div>
+        <div className="max-w-full">
             <div className="sticky top-[64px] z-[2] border-b bg-background p-4">
                 <div className="mx-auto max-w-[1800px]">
                     <div>this is title and </div>
@@ -42,13 +42,13 @@ const LayoutChart = () => {
     return (
         <div className="min-h-screen bg-muted p-4">
             <ResponsiveGridLayout
-                className="layout z-[1] mx-auto max-w-[1800px]"
+                className="layout z-[1] mx-auto w-[1800px] max-w-full"
                 breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                 cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                isResizable={false}
+                isResizable={true}
                 isDraggable={true}
             >
-                <Card key="a">oke gan disini</Card>
+                <Card key="a"></Card>
                 <Card key="b"></Card>
                 <Card key="c"></Card>
             </ResponsiveGridLayout>

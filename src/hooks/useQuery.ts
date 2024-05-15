@@ -24,7 +24,8 @@ export const useQuery = () => {
                 signal: controller.signal,
             })
                 .then(async (data) => {
-                    const res: ResponseData = await data.json();
+                    const res: ResponseData<QueryResult | null> =
+                        await data.json();
                     setError(res.message);
                     setData(res.data);
                 })
@@ -49,13 +50,14 @@ export const useQuery = () => {
 
     const cancelQuery = useCallback(async () => {
         setLoadingCancel(true);
+        controller.abort();
         setController(new AbortController());
         await fetch("/api/kill-query", {
             method: "POST",
             body: JSON.stringify({ queryId: queryId }),
         })
             .then(async (data) => {
-                const res: ResponseData = await data.json();
+                const res: ResponseData<QueryResult | null> = await data.json();
                 setError(res.message);
                 setData(res.data);
             })

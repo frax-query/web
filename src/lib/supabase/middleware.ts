@@ -56,12 +56,10 @@ export async function updateSession(request: NextRequest) {
     const {
         data: { user },
     } = await supabase.auth.getUser();
-
     if (user) {
         response.cookies.set({
             name: "user",
             value: JSON.stringify(user),
-            path: "/",
         });
     } else {
         const isHome = request.nextUrl.pathname === "/";
