@@ -1,7 +1,6 @@
 "use client";
 
 import { useAuthStore } from "@/hooks/store/authStore";
-import { createClient } from "@/lib/supabase/client";
 import { Formik } from "formik";
 import type { Dispatch, SetStateAction } from "react";
 import { z, ZodError } from "zod";
@@ -37,7 +36,6 @@ export const LoginSection: React.FC<{
     const { loading, handleLogin: login } = useAuth();
 
     const handleLogin = async (values: FormValues) => {
-        const client = createClient();
         const { data, isError, message } = await login(
             values.email,
             values.password
@@ -49,11 +47,6 @@ export const LoginSection: React.FC<{
             });
             return;
         }
-        if (data.session)
-            await client.auth.setSession({
-                access_token: data.session.access_token,
-                refresh_token: data.session.refresh_token,
-            });
         setUser(data.user);
     };
     return (

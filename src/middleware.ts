@@ -6,6 +6,7 @@ export async function middleware(request: NextRequest) {
         const allowedOrigins = process.env.ALLOWED_ORIGIN?.split(",") ?? [
             "http://localhost:3000",
         ];
+
         if (!allowedOrigins.includes(request.headers.get("origin") ?? "")) {
             return new NextResponse(null, {
                 status: 400,

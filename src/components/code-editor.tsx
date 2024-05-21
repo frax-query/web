@@ -15,8 +15,11 @@ loader.config({
 
 export const MonacoEditor: React.FC<{
     setFormatCode: React.Dispatch<React.SetStateAction<() => void>>;
-    setQuery: React.Dispatch<React.SetStateAction<string | undefined>>;
-}> = ({ setFormatCode, setQuery }) => {
+    setQuery: (e: string) => void;
+    loading: boolean;
+    query: string | null;
+    activeQuery: boolean;
+}> = ({ setFormatCode, setQuery, loading, query, activeQuery }) => {
     const { theme } = useTheme();
     const [isClient, setIsClient] = useState(false);
     useEffect(() => {
@@ -185,15 +188,16 @@ export const MonacoEditor: React.FC<{
         );
     };
     if (!isClient) return null;
+    if (!activeQuery) return null;
     return (
         <Editor
             defaultLanguage="sql1"
-            defaultValue="-- select * from viction_mainnet.log_events limit 10"
+            value={query ?? ""}
             language="sql1"
             theme={`${theme === "light" ? "" : "vs-dark"}`}
             onMount={handleEditorDidMount}
-            options={{ minimap: { enabled: false } }}
-            onChange={(q) => setQuery(q)}
+            options={{ minimap: { enabled: false }, readOnly: loading }}
+            onChange={(q) => setQuery(q ?? "")}
         />
     );
 };

@@ -113,11 +113,23 @@ export const ChartConfig: React.FC<{
         SetStateAction<
             {
                 id: number;
+                chart_id: string;
                 config: ICharts;
+                query_id: string;
             }[]
         >
     >;
-}> = ({ columns, data, config, idConfig, setListTabs }) => {
+    handleSaveChart: () => Promise<void>;
+    loadingSave: boolean;
+}> = ({
+    columns,
+    data,
+    config,
+    idConfig,
+    setListTabs,
+    handleSaveChart,
+    loadingSave,
+}) => {
     const [dataX, setDataX] = useState<(string | number | null)[]>([]);
     const [dataSeries, setDataSeries] = useState<IDataSeries>([]);
     const [dataMetrics, setDataMetrics] = useState<IDataMetrics>({
@@ -446,10 +458,6 @@ export const ChartConfig: React.FC<{
     );
 
     useEffect(() => {
-        console.log(dataSeries);
-    }, [dataSeries]);
-
-    useEffect(() => {
         if (
             idConfig > -1 &&
             (config.xaxis.value || config.selectedChart === "metric")
@@ -467,7 +475,6 @@ export const ChartConfig: React.FC<{
                     textValue: config.metricConfig.textCompare,
                 });
 
-            console.log("ini disini");
             const { dataX, dataY } = getDataSeries(config, data);
             setDataX(dataX);
             setDataSeries(dataY);
@@ -514,7 +521,12 @@ export const ChartConfig: React.FC<{
                                 <div className="text-base font-semibold">
                                     Chart Settings
                                 </div>
-                                <Button className="h-6" variant="default">
+                                <Button
+                                    className="h-6"
+                                    variant="default"
+                                    disabled={loadingSave}
+                                    onClick={() => handleSaveChart()}
+                                >
                                     Save
                                 </Button>
                             </div>

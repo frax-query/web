@@ -125,12 +125,15 @@ dependencies:
   next:
     specifier: 14.1.4
     version: 14.1.4(react-dom@18.3.0)(react@18.3.0)
-  next-nprogress-bar:
-    specifier: ^2.3.11
-    version: 2.3.11
   next-themes:
     specifier: ^0.3.0
     version: 0.3.0(react-dom@18.3.0)(react@18.3.0)
+  nextjs-toploader:
+    specifier: ^1.6.12
+    version: 1.6.12(next@14.1.4)(react-dom@18.3.0)(react@18.3.0)
+  nprogress:
+    specifier: ^0.2.0
+    version: 0.2.0
   prettier:
     specifier: ^3.2.5
     version: 3.2.5
@@ -184,6 +187,9 @@ devDependencies:
   '@types/node':
     specifier: ^20.12.10
     version: 20.12.10
+  '@types/nprogress':
+    specifier: ^0.2.3
+    version: 0.2.3
   '@types/react':
     specifier: ^18.3.0
     version: 18.3.0
@@ -1549,6 +1555,10 @@ packages:
     resolution: {integrity: sha512-Eem5pH9pmWBHoGAT8Dr5fdc5rYA+4NAovdM4EktRPVAAiJhmWWfQrA0cFhAbOsQdSfIHjAud6YdkbL69+zSKjw==}
     dependencies:
       undici-types: 5.26.5
+
+  /@types/nprogress@0.2.3:
+    resolution: {integrity: sha512-k7kRA033QNtC+gLc4VPlfnue58CM1iQLgn1IMAU8VPHGOj7oIHPp9UlhedEnD/Gl8evoCjwkZjlBORtZ3JByUA==}
+    dev: true
 
   /@types/phoenix@1.6.4:
     resolution: {integrity: sha512-B34A7uot1Cv0XtaHRYDATltAdKx0BvVKNgYNqE4WjtPUa4VQJM7kxeXcVKaH+KS+kCmZ+6w+QaUdcljiheiBJA==}
@@ -3483,12 +3493,6 @@ packages:
       randexp: 0.4.6
     dev: false
 
-  /next-nprogress-bar@2.3.11:
-    resolution: {integrity: sha512-OjSvsQwgSWa2qBMYO478QreGG9Jt82tr4wTQptmiyzNqqjzHCyKZNkhANnzPrjuFAoelIvmruJuakODofSnvTQ==}
-    dependencies:
-      nprogress: 0.2.0
-    dev: false
-
   /next-themes@0.3.0(react-dom@18.3.0)(react@18.3.0):
     resolution: {integrity: sha512-/QHIrsYpd6Kfk7xakK4svpDI5mmXP0gfvCoJdGpZQ2TOrQZmsW0QxjaiLn8wbIKjtm4BTSqLoix4lxYYOnLJ/w==}
     peerDependencies:
@@ -3536,6 +3540,20 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
+    dev: false
+
+  /nextjs-toploader@1.6.12(next@14.1.4)(react-dom@18.3.0)(react@18.3.0):
+    resolution: {integrity: sha512-nbun5lvVjlKnxLQlahzZ55nELVEduqoEXT03KCHnsEYJnFpI/3BaIzpMyq/v8C7UGU2NfxQmjq6ldZ310rsDqA==}
+    peerDependencies:
+      next: '>= 6.0.0'
+      react: '>= 16.0.0'
+      react-dom: '>= 16.0.0'
+    dependencies:
+      next: 14.1.4(react-dom@18.3.0)(react@18.3.0)
+      nprogress: 0.2.0
+      prop-types: 15.8.1
+      react: 18.3.0
+      react-dom: 18.3.0(react@18.3.0)
     dev: false
 
   /node-releases@2.0.14:

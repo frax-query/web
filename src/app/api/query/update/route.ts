@@ -7,10 +7,11 @@ export async function POST(
     req: NextRequest
 ): Promise<NextResponse<ResponseData<object>>> {
     const client = createClient();
-    const body: { password: string } = await req.json();
-    const { error } = await client.auth.updateUser({
-        password: body?.password,
-    });
+    const body: { query: string; title: string; id: string } = await req.json();
+    const { error } = await client
+        .from("query")
+        .update({ title: body.title, query: body.query })
+        .eq("id", body.id);
     return NextResponse.json(
         {
             message: error ? error.message : "",

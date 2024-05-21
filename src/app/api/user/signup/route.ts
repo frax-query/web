@@ -9,7 +9,6 @@ export async function POST(
 ): Promise<
     NextResponse<ResponseData<{ user: User | null; session: Session | null }>>
 > {
-    console.log("ini disini");
     const client = createClient();
     const body: {
         email: string;
@@ -17,6 +16,22 @@ export async function POST(
         username: string;
         fullname: string;
     } = await req.json();
+
+    const { error: err, data: d } = await client
+        .from("profiles")
+        .select()
+        .eq("username", body.username);
+    if (!err && d.length > 0)
+        return NextResponse.json(
+            {
+                message: "Username already exist",
+                data: { user: null, session: null },
+                isError: true,
+            },
+            {
+                status: 200,
+            }
+        );
 
     const { error, data } = await client.auth.signUp({
         email: body.email,
@@ -30,9 +45,9 @@ export async function POST(
     });
     return NextResponse.json(
         {
-            message: !error ? "" : error.message,
+            message: error ? error.message : "",
             data: data,
-            isError: error ? false : true,
+            isError: !error ? false : true,
         },
         {
             status: 200,

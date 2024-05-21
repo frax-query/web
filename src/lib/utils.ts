@@ -559,7 +559,6 @@ export const getDataSeries = (
     }
 
     if (config.y2axis.value) {
-        console.log("ini disini");
         const dataX = data?.map((item) => item[config.xaxis.value]) ?? [];
         const dataY = [
             {
@@ -633,3 +632,8 @@ export const getDataSeries = (
         dataY: [],
     };
 };
+
+export const currentDateTime = new Date()
+    .toISOString()
+    .slice(0, 19)
+    .replace("T", " ");

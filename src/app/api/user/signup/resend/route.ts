@@ -14,9 +14,9 @@ export async function POST(
     });
     return NextResponse.json(
         {
-            message: !error ? "" : error.message,
+            message: error ? error.message : "",
             data: {},
-            isError: !error ? true : false,
+            isError: error ? true : false,
         },
         {
             status: 200,

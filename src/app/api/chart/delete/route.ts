@@ -5,16 +5,17 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function POST(
     req: NextRequest
-): Promise<NextResponse<ResponseData<object>>> {
+): Promise<NextResponse<ResponseData<null>>> {
     const client = createClient();
-    const body: { password: string } = await req.json();
-    const { error } = await client.auth.updateUser({
-        password: body?.password,
-    });
+    const body: { ids: string[] } = await req.json();
+    const { data, error } = await client
+        .from("charts")
+        .delete()
+        .in("id", body.ids);
     return NextResponse.json(
         {
             message: error ? error.message : "",
-            data: {},
+            data: data,
             isError: error ? true : false,
         },
         {

@@ -19,11 +19,18 @@ export async function POST(req: NextRequest): Promise<
         email: body?.email,
         password: body?.password,
     });
+
+    if (!error) {
+        await client.auth.setSession({
+            access_token: data.session.access_token,
+            refresh_token: data.session.refresh_token,
+        });
+    }
     return NextResponse.json(
         {
-            message: !error ? "" : error.message,
+            message: error ? error.message : "",
             data: data,
-            isError: !error ? true : false,
+            isError: error ? true : false,
         },
         {
             status: 200,

@@ -12,7 +12,7 @@ import {
 } from "../ui/tooltip";
 
 export const HeaderCodeEditor: React.FC<{
-    setTitle: React.Dispatch<React.SetStateAction<string>>;
+    setTitle: (e: string) => void;
     formatCode: () => void;
     runQuery: (query: string | undefined) => Promise<void>;
     loading: boolean;
@@ -20,6 +20,8 @@ export const HeaderCodeEditor: React.FC<{
     query: string | undefined;
     cancelQuery: () => Promise<void>;
     title: string;
+    saveDataQuery: () => Promise<void>;
+    loadingSave: boolean;
 }> = ({
     setTitle,
     formatCode,
@@ -29,6 +31,8 @@ export const HeaderCodeEditor: React.FC<{
     query,
     cancelQuery,
     title,
+    saveDataQuery,
+    loadingSave,
 }) => {
     return (
         <div className="grid grid-cols-2 border-b p-4">
@@ -90,7 +94,7 @@ export const HeaderCodeEditor: React.FC<{
                     </Tooltip>
                 </TooltipProvider>
                 <Separator orientation="vertical" className="mr-2" />
-                {!loading && (
+                {!loading && !loadingCancel && (
                     <Button
                         className="h-6 text-sm"
                         onClick={() => runQuery(query)}
@@ -98,9 +102,9 @@ export const HeaderCodeEditor: React.FC<{
                         Run
                     </Button>
                 )}
-                {loading && (
+                {(loading || loadingCancel) && (
                     <Button
-                        className="h-6 text-sm"
+                        className="flex h-6 items-center gap-2 text-sm"
                         variant="destructive"
                         onClick={() => cancelQuery()}
                         disabled={loadingCancel}
@@ -109,7 +113,13 @@ export const HeaderCodeEditor: React.FC<{
                         Cancel
                     </Button>
                 )}
-                <Button className="h-6 text-sm" variant="outline">
+                <Button
+                    className="flex h-6 items-center gap-2 text-sm"
+                    variant="outline"
+                    onClick={saveDataQuery}
+                    disabled={loadingSave}
+                >
+                    {loadingSave && <PulseLoading />}
                     Save
                 </Button>
             </div>

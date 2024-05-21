@@ -127,3 +127,19 @@ export interface IDataMetrics {
     textValue: string;
     compareValue: number | string | null | undefined;
 }
+
+export interface ITableQuery {
+    id: string;
+    update_at: string;
+    query: string;
+    title: string;
+    user_id: string;
+    created_at: string;
+}
+
+export interface ITableCharts {
+    id: string;
+    updated_at?: string;
+    config: string;
+    query_id: string;
+}

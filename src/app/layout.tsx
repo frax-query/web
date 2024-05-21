@@ -4,7 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/theme-provider";
 import Header from "@/components/header";
 import { Toaster } from "@/components/ui/toaster";
-import ProgressBarProvider from "@/progress-bar-provider";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,10 +28,13 @@ export default function RootLayout({
                         enableSystem
                         disableTransitionOnChange
                     >
-                        <ProgressBarProvider>
-                            <Header />
-                            {children}
-                        </ProgressBarProvider>
+                        <NextTopLoader
+                            color="#e9590c"
+                            showSpinner={false}
+                            height={2}
+                        />
+                        <Header />
+                        {children}
                     </ThemeProvider>
                 </div>
                 <Toaster />

@@ -56,7 +56,6 @@ export const VerifyPasswordRecovery: React.FC<{
         startCountdown();
     };
     const handleOtp = async (otp: string) => {
-        console.log(otp);
         const { isError, message } = await verifyOtp(email, "email", otp);
         if (isError) {
             toast({
