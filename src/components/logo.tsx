@@ -1,8 +1,8 @@
 export const Logo = () => {
     return (
         <div className="font-bold">
-            <span>Query\</span>
-            <span className="text-primary">Viction</span>
+            <span>Frax-</span>
+            <span className="text-primary">Query</span>
         </div>
     );
 };

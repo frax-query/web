@@ -59,7 +59,7 @@ export const HeaderCodeEditor: React.FC<{
                 {title}
             </div>
             <div className="flex h-full items-center justify-end gap-2">
-                <TooltipProvider>
+                <TooltipProvider delayDuration={100}>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
@@ -76,7 +76,7 @@ export const HeaderCodeEditor: React.FC<{
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-                <TooltipProvider>
+                <TooltipProvider delayDuration={100}>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button

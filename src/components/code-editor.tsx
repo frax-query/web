@@ -71,7 +71,7 @@ export const MonacoEditor: React.FC<{
                     return {
                         label: sug,
                         kind: monaco?.languages.CompletionItemKind.Property,
-                        insertText: sug.toUpperCase(),
+                        insertText: sug,
                     };
                 });
                 const sugs_database = language.databases.map((item) => {

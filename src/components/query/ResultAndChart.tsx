@@ -34,7 +34,16 @@ export const ResultAndChartSection: React.FC<{
         >
     >;
     idQuery: string;
-}> = ({ error, result, loadingQuery, listTabs, setListTabs, idQuery }) => {
+    isSaved: boolean;
+}> = ({
+    error,
+    result,
+    loadingQuery,
+    listTabs,
+    setListTabs,
+    idQuery,
+    isSaved,
+}) => {
     const [columns, setColumns] = useState<
         {
             key: string;
@@ -106,6 +115,14 @@ export const ResultAndChartSection: React.FC<{
 
     const handleSaveChart = useCallback(async () => {
         const dataTab = listTabs[activeTab - 1];
+        if (!isSaved) {
+            toast({
+                title: "Failed to save chart",
+                description: "Save the query first, before saving the chart",
+                variant: "destructive",
+            });
+            return;
+        }
         let res: ResponseData<ITableCharts[] | null>;
         if (!dataTab.chart_id) {
             res = await saveChart(idQuery, JSON.stringify(dataTab.config));
@@ -126,6 +143,7 @@ export const ResultAndChartSection: React.FC<{
         setListTabs((prev) => {
             const newArr = [...prev];
             newArr[activeTab - 1].chart_id = res.data?.[0].id ?? "";
+            newArr[activeTab - 1].query_id = idQuery;
             return newArr;
         });
         toast({

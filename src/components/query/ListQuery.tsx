@@ -1,9 +1,7 @@
 "use client";
 
-import { RiSearchLine } from "@remixicon/react";
 import { PackageOpenIcon, SquarePlusIcon, Trash2Icon } from "lucide-react";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import type { ITableCharts, ITableQuery } from "@/types";
 import { Checkbox } from "../ui/checkbox";
 import type { Dispatch, SetStateAction } from "react";
@@ -54,14 +52,6 @@ export const ListQuery: React.FC<{
 
     return (
         <div className="h-full space-y-4 p-4">
-            <div className="relative ml-auto">
-                <RiSearchLine className="lucide lucide-search absolute left-2.5 top-2 h-3 w-3 text-muted-foreground" />
-                <Input
-                    type="search"
-                    placeholder="Search query"
-                    className="h-7 w-full px-8 text-xs"
-                />
-            </div>
             <div className="flex items-center justify-between">
                 <div className="text-muted-foreground">Your Queries</div>
                 <div className="flex items-center">
@@ -81,7 +71,7 @@ export const ListQuery: React.FC<{
                     </Button>
                 </div>
             </div>
-            <ScrollArea className="h-[calc(100%_-_75px)] space-y-1 py-1">
+            <ScrollArea className="h-[calc(100%_-_30px)] space-y-1 py-1">
                 <div className="space-y-1">
                     {loading &&
                         Array(10)

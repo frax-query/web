@@ -1,5 +1,5 @@
 {
-    "name": "query-viction",
+    "name": "frax-query",
     "version": "0.1.0",
     "private": true,
     "scripts": {
@@ -58,7 +58,8 @@
         "react": "^18.3.0",
         "react-data-grid": "7.0.0-beta.43",
         "react-dom": "^18.3.0",
-        "react-grid-layout": "^1.4.4",
+        "react-grid-layout": "github:akbaridria/react-grid-layout",
+        "react-markdown": "^9.0.1",
         "react-resizable-panels": "^2.0.19",
         "sql-formatter": "^15.3.1",
         "tailwind-merge": "^2.3.0",

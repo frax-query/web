@@ -143,3 +143,27 @@ export interface ITableCharts {
     config: string;
     query_id: string;
 }
+
+export type DeviceMode = "Desktop" | "Tablet" | "Smartphone";
+export type DeviceModeSize = {
+    [key in DeviceMode]: string;
+};
+
+export type CardType = "text" | "chart";
+
+export interface IDataDashboard {
+    type: CardType;
+    id: string;
+    value: string;
+}
+
+export interface ITableDashboard {
+    id: string;
+    updated_at: string;
+    title: string;
+    description: string;
+    layouts: string;
+    data: string;
+    user_id: string;
+    title_slug: string;
+}

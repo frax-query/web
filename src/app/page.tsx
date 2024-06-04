@@ -35,7 +35,7 @@ export default function Home() {
                     <h3 className="text-4xl font-bold">
                         Get Insight On{" "}
                         <span className="text-primary dark:text-primary">
-                            Viction
+                            Fraxtal
                         </span>{" "}
                         Network
                     </h3>

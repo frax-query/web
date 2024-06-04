@@ -23,7 +23,7 @@ const defaultQueryValue: ITableQuery & {
 } = {
     created_at: "",
     id: "1",
-    query: "-- select * from viction_mainnet.log_events limit 10",
+    query: "-- select * from fraxtal_mainnet.log_events limit 10",
     title: "Untitle query",
     update_at: "",
     user_id: "",
@@ -194,10 +194,37 @@ export default function Query() {
 
     const addNewQuery = useCallback(() => {
         const newQuery = { ...defaultQueryValue, id: uuidv4() };
-        setListQuery((prev) => [newQuery, ...prev]);
+        setListQuery((prev) => {
+            const newArr = [newQuery, ...prev];
+            if (activeQuery) {
+                const indexArr = newArr.findIndex(
+                    (y) => y.id === activeQuery.id
+                );
+                if (indexArr > -1) {
+                    newArr[indexArr] = activeQuery;
+                    newArr[indexArr].charts = listTabs.map((y) => {
+                        return {
+                            id: y.chart_id,
+                            config: JSON.stringify(y.config),
+                            query_id: y.query_id,
+                        };
+                    });
+                }
+            }
+            return newArr;
+        });
         setActiveQuery(newQuery);
         setListTabs([]);
-    }, [defaultQueryValue, setListQuery, setActiveQuery, setListTabs, router]);
+        resetData();
+    }, [
+        listTabs,
+        defaultQueryValue,
+        activeQuery,
+        setListQuery,
+        setActiveQuery,
+        setListTabs,
+        resetData,
+    ]);
 
     const saveDataQuery = useCallback(async () => {
         if (activeQuery) {
@@ -339,6 +366,7 @@ export default function Query() {
                                     listTabs={listTabs}
                                     idQuery={activeQuery?.id ?? ""}
                                     setListTabs={setListTabs}
+                                    isSaved={activeQuery?.isSaved}
                                 />
                             )}
                         </ResizablePanel>

@@ -245,7 +245,13 @@ export const ChartConfig: React.FC<{
                 newArr[idConfig].config.metricConfig.value = "";
                 newArr[idConfig].config.stacked = false;
                 newArr[idConfig].config.normalized = false;
-                newArr[idConfig].config.yaxis.formatter = undefined;
+                newArr[idConfig].config.yaxis.formatter = (
+                    v: number | string | null
+                ) => {
+                    return new Intl.NumberFormat("en", {
+                        notation: "compact",
+                    }).format(Number(v));
+                };
                 newArr[idConfig].config.label.formatter = undefined;
                 return newArr;
             });
@@ -320,7 +326,13 @@ export const ChartConfig: React.FC<{
                     newArr[idConfig].config.group.value = "";
                     newArr[idConfig].config.normalized = false;
                     newArr[idConfig].config.stacked = false;
-                    newArr[idConfig].config.yaxis.formatter = undefined;
+                    newArr[idConfig].config.yaxis.formatter = (
+                        v: number | string | null
+                    ) => {
+                        return new Intl.NumberFormat("en", {
+                            notation: "compact",
+                        }).format(Number(v));
+                    };
                     newArr[idConfig].config.label.formatter = undefined;
                 }
                 return newArr;
@@ -337,7 +349,13 @@ export const ChartConfig: React.FC<{
                     newArr[idConfig].config.group.value = "";
                     newArr[idConfig].config.stacked = false;
                     newArr[idConfig].config.normalized = false;
-                    newArr[idConfig].config.yaxis.formatter = undefined;
+                    newArr[idConfig].config.yaxis.formatter = (
+                        v: number | string | null
+                    ) => {
+                        return new Intl.NumberFormat("en", {
+                            notation: "compact",
+                        }).format(Number(v));
+                    };
                     newArr[idConfig].config.label.formatter = undefined;
                     return newArr;
                 });
@@ -347,7 +365,13 @@ export const ChartConfig: React.FC<{
                 const newArr = [...prev];
                 newArr[idConfig].config.y2axis.value = "";
                 newArr[idConfig].config.group.value = e;
-                newArr[idConfig].config.yaxis.formatter = undefined;
+                newArr[idConfig].config.yaxis.formatter = (
+                    v: number | string | null
+                ) => {
+                    return new Intl.NumberFormat("en", {
+                        notation: "compact",
+                    }).format(Number(v));
+                };
                 newArr[idConfig].config.label.formatter = undefined;
                 return newArr;
             });
@@ -448,7 +472,13 @@ export const ChartConfig: React.FC<{
                         );
                     };
                 } else {
-                    newArr[idConfig].config.yaxis.formatter = undefined;
+                    newArr[idConfig].config.yaxis.formatter = (
+                        v: number | string | null
+                    ) => {
+                        return new Intl.NumberFormat("en", {
+                            notation: "compact",
+                        }).format(Number(v));
+                    };
                     newArr[idConfig].config.label.formatter = undefined;
                 }
                 return newArr;
@@ -876,7 +906,7 @@ export const ChartConfig: React.FC<{
                                                     </div>
                                                 </CollapsibleContent>
                                             </Collapsible>
-                                            <Collapsible>
+                                            {/* <Collapsible>
                                                 <CollapsibleTrigger className="w-full">
                                                     <div className="flex items-center justify-between">
                                                         <div className="font-semibold">
@@ -936,7 +966,7 @@ export const ChartConfig: React.FC<{
                                                         </div>
                                                     </div>
                                                 </CollapsibleContent>
-                                            </Collapsible>
+                                            </Collapsible> */}
                                         </div>
                                     </TabsContent>
                                     <TabsContent

@@ -46,6 +46,47 @@ export const optionCharts = (
     dataSeries: IDataSeries,
     isDark: boolean
 ): EChartsOption => {
+    if (config.selectedChart === "pie") {
+        return {
+            darkMode: isDark,
+            // @ts-expect-error expect to be error for formatter
+            tooltip: {
+                trigger: "axis",
+                type: "cross",
+                valueFormatter: config.yaxis.formatter,
+            },
+            label: {
+                show: config.label.show,
+                formatter: config.label.formatter,
+            },
+            title: {
+                show: config.title.show,
+                text: config.title.value,
+                top: "top",
+                left: config.title.position,
+                textStyle: {
+                    color: isDark ? darkTextColor : lightTextrColor,
+                    show: config.title.show,
+                },
+            },
+            color: isDark ? themeChartDark.color : themeChartLight.color,
+            backgroundColor: isDark
+                ? themeChartDark.backgroundColor
+                : themeChartLight.backgroundColor,
+            legend: {
+                show: config.legend.show,
+                left: config.legend.position,
+                bottom: "bottom",
+                orient: "horizontal",
+                type: "scroll",
+                textStyle: {
+                    color: isDark ? darkTextColor : lightTextrColor,
+                },
+            },
+            // @ts-expect-error expect to be error;
+            series: dataSeries,
+        };
+    }
     return {
         darkMode: isDark,
         // @ts-expect-error expect to be error for formatter
@@ -87,8 +128,7 @@ export const optionCharts = (
                 type: config.xaxis.type,
                 showGrid: false,
                 data: dataX,
-                show:
-                    config.selectedChart === "pie" ? false : config.xaxis.show,
+                show: config.xaxis.show,
                 splitLine: {
                     show: false,
                 },
@@ -161,7 +201,9 @@ export const defaultConfigChart: ICharts = {
         type: "value",
         value: "",
         formatter: (v: number | string | null) => {
-            return v as string;
+            return new Intl.NumberFormat("en-IN", {
+                notation: "compact",
+            }).format(Number(v));
         },
     },
     y2axis: {
@@ -478,6 +520,23 @@ export const getDataSeries = (
 ): { dataX: (string | number | null)[]; dataY: IDataSeries } => {
     if (config.selectedChart === "pie") {
         const dataX = data?.map((item) => item[config.xaxis.value]) ?? [];
+        const newSeries = [];
+        if (config.label.show) {
+            newSeries.push({
+                type: "pie",
+                data: data?.map((item) => {
+                    return {
+                        value: item[config.yaxis.value] ?? null,
+                        name: item[config.xaxis.value] ?? "",
+                    };
+                }),
+                label: {
+                    show: config.label.show,
+                    position: "inside",
+                    formatter: "{d}%",
+                },
+            });
+        }
         const dataY = [
             {
                 type: "pie",
@@ -488,6 +547,7 @@ export const getDataSeries = (
                     };
                 }),
             },
+            ...newSeries,
         ];
         return {
             dataX,
@@ -637,3 +697,12 @@ export const currentDateTime = new Date()
     .toISOString()
     .slice(0, 19)
     .replace("T", " ");
+
+export const buildSlug = (text: string) => {
+    const a = text.trim().replace(/\s+/g, " ");
+    const b = a
+        .toLowerCase()
+        .replace(/ /g, "-")
+        .replace(/[^\w-]+/g, "");
+    return b;
+};
