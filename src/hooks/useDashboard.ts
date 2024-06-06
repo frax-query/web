@@ -153,6 +153,8 @@ export const useDashboard = () => {
         setLayouts(defaultLayouts);
         setDevice("Desktop");
         setBreakpoint("lg");
+        setTitle("Click to edit title");
+        setDescription("Click to edit description");
     }, []);
 
     const listGrid = useMemo(() => {

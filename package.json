@@ -61,6 +61,8 @@
         "react-grid-layout": "github:akbaridria/react-grid-layout",
         "react-markdown": "^9.0.1",
         "react-resizable-panels": "^2.0.19",
+        "rehype-raw": "^7.0.0",
+        "remark-gfm": "^4.0.0",
         "sql-formatter": "^15.3.1",
         "tailwind-merge": "^2.3.0",
         "tailwindcss-animate": "^1.0.7",
