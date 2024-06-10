@@ -1,11 +1,11 @@
 "use client";
 
 import { useQuery } from "@/hooks/useQuery";
-import { optionCharts, getDataSeries } from "@/lib/utils";
+import { optionCharts, getDataSeries, defaultConfigChart } from "@/lib/utils";
 import type {
     ICharts,
-    IDataMetrics,
     IDataSeries,
+    ITableCharts,
     ITableQuery,
     ResponseData,
 } from "@/types";
@@ -21,50 +21,60 @@ import ReactECharts from "echarts-for-react";
 interface ICardChart {
     handleRemoveCard: (id: string) => void;
     id: string;
-    config: ICharts;
+    query_id: string;
 }
 export const CardChart: React.FC<ICardChart> = ({
     handleRemoveCard,
     id,
-    config,
+    query_id,
 }) => {
     const [error, setError] = useState("");
     const [query, setQuery] = useState("");
-    const [dataMetrics, setDataMetrics] = useState<IDataMetrics>({
-        textValue: "",
-        value: null,
-        compareValue: null,
-    });
     const [dataX, setDataX] = useState<(string | number | null)[]>([]);
     const [dataSeries, setDataSeries] = useState<IDataSeries>([]);
     const [loading, setLoading] = useState(true);
+    const [config, setConfig] = useState<ICharts>(defaultConfigChart);
 
     const { theme } = useTheme();
     const { runQuery, data, error: err, loading: loadingQuery } = useQuery();
 
-    useEffect(() => {
-        setDataMetrics({
-            compareValue: config.metricConfig.compareValue,
-            textValue: config.metricConfig.textCompare,
-            value: config.metricConfig.value,
-        });
-    }, [JSON.stringify(config)]);
-
     // get query function
-    const fetchQuery = async (id: string) => {
+    const fetchQuery = async (id: string, chart_id: string) => {
         try {
             setLoading(true);
             setError("");
-            const raw = await fetch("/api/query/get-by-id", {
+            const raw = fetch("/api/query/get-by-id", {
                 method: "POST",
                 body: JSON.stringify({ query_id: id }),
             });
-            const data: ResponseData<ITableQuery[] | null> = await raw.json();
-            if (data.data) {
-                if (data.data.length > 0) {
-                    setQuery(data.data[0].query);
-                }
-            }
+            const raw2 = fetch("/api/chart/get-by-id", {
+                method: "POST",
+                body: JSON.stringify({ chart_id: chart_id }),
+            });
+            await Promise.all([raw, raw2])
+                .then((responses) =>
+                    Promise.all(responses.map((x) => x.json()))
+                )
+                .then((realData) => {
+                    const data1 = realData[0] as ResponseData<
+                        ITableQuery[] | null
+                    >;
+                    const data2 = realData[1] as ResponseData<
+                        ITableCharts[] | null
+                    >;
+                    console.log(data1, data2);
+                    if (data1.data)
+                        if (data1.data.length > 0)
+                            setQuery(data1.data[0].query);
+                        else setError("Query not found");
+                    else setError(data1.message);
+
+                    if (data2.data)
+                        if (data2.data.length > 0)
+                            setConfig(JSON.parse(data2.data[0].config));
+                        else setError("Chart config not found");
+                    else setError(data2.message);
+                });
             setLoading(false);
         } catch (error) {
             setLoading(false);
@@ -75,9 +85,9 @@ export const CardChart: React.FC<ICardChart> = ({
 
     useEffect(() => {
         (async () => {
-            await fetchQuery(id);
+            await fetchQuery(query_id, id);
         })();
-    }, [id]);
+    }, [query_id, id]);
 
     useEffect(() => {
         (async () => {
@@ -172,7 +182,7 @@ export const CardChart: React.FC<ICardChart> = ({
                 />
             )}
             {config.selectedChart === "metric" && (
-                <CardMetrics config={config} data={dataMetrics} />
+                <CardMetrics config={config} result={data ?? []} />
             )}
         </Card>
     );

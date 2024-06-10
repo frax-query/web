@@ -99,8 +99,8 @@ export const SearchChart: React.FC<ISearchChart> = ({
                                             handleAddCard(
                                                 "chart",
                                                 layouts,
-                                                item.query_id,
-                                                item.config
+                                                item.id,
+                                                item.query_id
                                             );
                                             setOpen(false);
                                         }}

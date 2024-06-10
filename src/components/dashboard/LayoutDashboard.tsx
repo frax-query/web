@@ -131,11 +131,11 @@ export const LayoutChart: React.FC<ILayoutChart> = ({
                                         <CardChart
                                             handleRemoveCard={handleRemoveCard}
                                             id={item.i}
-                                            config={JSON.parse(
+                                            query_id={
                                                 data.filter(
                                                     (x) => x.id === item.i
                                                 )[0].value
-                                            )}
+                                            }
                                         />
                                     </div>
                                 );

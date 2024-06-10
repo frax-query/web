@@ -5,12 +5,9 @@ import { Combobox } from "@/components/discover/combobox";
 import ModalSearch from "@/components/discover/modal-search";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/hooks/store/authStore";
+import { useDiscovery } from "@/hooks/useDiscovery";
 
 const orderList = [
-    {
-        value: "trending",
-        label: "🔥 Trending",
-    },
     {
         value: "recently_created",
         label: "🆕 Recently Created",
@@ -27,6 +24,8 @@ const orderList = [
 
 export default function Home() {
     const user = useAuthStore((state) => state.user);
+
+    const { loading, listDashboard, error } = useDiscovery();
 
     return (
         <main>
@@ -48,19 +47,55 @@ export default function Home() {
                         <ModalSearch />
                     </div>
                 </div>
-                <div className="flex items-center justify-end py-4">
+                <div className="flex items-center justify-end gap-4 py-4">
                     <div>
                         <Combobox
                             orderList={orderList}
-                            defaultValue="trending"
+                            defaultValue="recently_created"
                         />
                     </div>
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    {Array(100)
-                        .fill(0)
-                        .map((index) => {
-                            return <CardDashboard key={`dashboard-${index}`} />;
+                    {loading &&
+                        Array(50)
+                            .fill(0)
+                            .map((index) => {
+                                return (
+                                    <CardDashboard
+                                        key={`dashboard-skeleton-${index}`}
+                                        loading={loading}
+                                        data={{
+                                            date: "oke",
+                                            description: "kk",
+                                            likes: 0,
+                                            slug: "asd-asd",
+                                            title: "oke gan disini",
+                                            username: "@ajsdasd",
+                                            views: 0,
+                                        }}
+                                    />
+                                );
+                            })}
+                    {!loading &&
+                        !!error &&
+                        listDashboard.map((item) => {
+                            return (
+                                <CardDashboard
+                                    key={`dashboard-${item.title_slug}`}
+                                    loading={false}
+                                    data={{
+                                        date: new Date(
+                                            item.updated_at
+                                        ).toDateString(),
+                                        description: item.description,
+                                        likes: Number(item.likes),
+                                        slug: item.title_slug,
+                                        title: item.title,
+                                        username: `@` + item.profiles.username,
+                                        views: Number(item.views),
+                                    }}
+                                />
+                            );
                         })}
                 </div>
             </div>

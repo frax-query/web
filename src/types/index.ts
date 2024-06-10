@@ -166,4 +166,6 @@ export interface ITableDashboard {
     data: string;
     user_id: string;
     title_slug: string;
+    views: string;
+    likes: string;
 }

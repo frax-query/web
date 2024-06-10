@@ -11,8 +11,33 @@ import {
     CommandItem,
     CommandList,
 } from "@/components/ui/command";
+import { useDiscovery } from "@/hooks/useDiscovery";
+import { useEffect, useState } from "react";
+import type { ITableDashboard } from "@/types";
+import { useDebounceValue } from "usehooks-ts";
 
 export const ModalSearch = () => {
+    const [listDashboard, setListDashboard] = useState<ITableDashboard[]>([]);
+    const [debouncedValue, setValue] = useDebounceValue("", 500);
+
+    const { searchDashboard } = useDiscovery();
+
+    useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
+        (async () => {
+            if (debouncedValue) {
+                const res = await searchDashboard(debouncedValue, signal);
+                setListDashboard(res);
+            }
+        })();
+
+        return () => {
+            controller.abort();
+        };
+    }, [debouncedValue]);
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -23,53 +48,33 @@ export const ModalSearch = () => {
                     className="rounded-lg border shadow-md"
                     shouldFilter={false}
                 >
-                    <CommandInput placeholder="Type a command or search..." />
+                    <CommandInput
+                        placeholder="Type a command or search..."
+                        onValueChange={(e) => setValue(e)}
+                    />
                     <CommandList>
                         <CommandEmpty>No results found.</CommandEmpty>
-                        <CommandGroup heading="Dashboards">
-                            {Array(200)
-                                .fill(0)
-                                .map((item, index) => {
+                        {listDashboard.length > 0 && (
+                            <CommandGroup heading="Dashboards">
+                                {listDashboard.map((item) => {
                                     return (
-                                        <CommandItem key={`dashboard-${index}`}>
+                                        <CommandItem
+                                            key={`dashboard-serch-${item.title_slug}`}
+                                        >
                                             <DashboardIcon className="mr-2 h-4 w-4" />
                                             <div className="flex w-full items-center justify-between">
                                                 <div>
-                                                    <div>
-                                                        Uniswap V2 and V3
-                                                        Volumes
-                                                    </div>
+                                                    <div>{item.title}</div>
                                                     <p className="line-clamp-1 text-xs text-muted-foreground">
-                                                        Lorem ipsum dolor sit
-                                                        amet, consectetur
-                                                        adipiscing elit, sed do
-                                                        eiusmod tempor
-                                                        incididunt ut labore et
-                                                        dolore magna aliqua. Ut
-                                                        enim ad minim veniam,
-                                                        quis nostrud
-                                                        exercitation ullamco
-                                                        laboris nisi ut aliquip
-                                                        ex ea commodo consequat.
-                                                        Duis aute irure dolor in
-                                                        reprehenderit in
-                                                        voluptate velit esse
-                                                        cillum dolore eu fugiat
-                                                        nulla pariatur.
-                                                        Excepteur sint occaecat
-                                                        cupidatat non proident,
-                                                        sunt in culpa qui
-                                                        officia deserunt mollit
-                                                        anim id est laborum{" "}
-                                                        {index}
+                                                        {item.description}
                                                     </p>
                                                 </div>
-                                                {/* <div>oke gan disana</div> */}
                                             </div>
                                         </CommandItem>
                                     );
                                 })}
-                        </CommandGroup>
+                            </CommandGroup>
+                        )}
                     </CommandList>
                 </Command>
             </DialogContent>

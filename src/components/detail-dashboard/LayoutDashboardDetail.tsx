@@ -74,11 +74,11 @@ export const LayoutDashboardDetail: React.FC<ILayoutChart> = ({
                                     <div key={item.i} data-grid={item}>
                                         <CardChart
                                             id={item.i}
-                                            config={JSON.parse(
+                                            query_id={
                                                 data.filter(
                                                     (x) => x.id === item.i
                                                 )[0].value
-                                            )}
+                                            }
                                         />
                                     </div>
                                 );

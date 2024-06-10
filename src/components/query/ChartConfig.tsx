@@ -41,7 +41,6 @@ import type {
     IDataSeries,
     IAllCharts,
     IListCharts,
-    IDataMetrics,
 } from "@/types";
 import ReactECharts from "echarts-for-react";
 import {
@@ -132,11 +131,6 @@ export const ChartConfig: React.FC<{
 }) => {
     const [dataX, setDataX] = useState<(string | number | null)[]>([]);
     const [dataSeries, setDataSeries] = useState<IDataSeries>([]);
-    const [dataMetrics, setDataMetrics] = useState<IDataMetrics>({
-        textValue: "",
-        value: null,
-        compareValue: null,
-    });
 
     const { theme } = useTheme();
 
@@ -256,7 +250,6 @@ export const ChartConfig: React.FC<{
                 return newArr;
             });
             setDataSeries(() => []);
-            setDataMetrics({ compareValue: null, textValue: "", value: null });
         },
         [setDataSeries, idConfig, setListTabs]
     );
@@ -397,14 +390,8 @@ export const ChartConfig: React.FC<{
                 newArr[idConfig].config.metricConfig.value = e;
                 return newArr;
             });
-            setDataMetrics((prev) => {
-                return {
-                    ...prev,
-                    value: data && data?.length > 0 ? data[0][e] : null,
-                };
-            });
         },
-        [setListTabs, idConfig, setDataMetrics, data]
+        [setListTabs, idConfig, data]
     );
 
     const handleCompareValueMetric = useCallback(
@@ -414,14 +401,8 @@ export const ChartConfig: React.FC<{
                 newArr[idConfig].config.metricConfig.compareValue = e;
                 return newArr;
             });
-            setDataMetrics((prev) => {
-                return {
-                    ...prev,
-                    compareValue: data && data?.length > 0 ? data[0][e] : null,
-                };
-            });
         },
-        [setListTabs, idConfig, setDataMetrics, data]
+        [setListTabs, idConfig, data]
     );
 
     const handleTextCompareMetric = useCallback(
@@ -431,14 +412,8 @@ export const ChartConfig: React.FC<{
                 newArr[idConfig].config.metricConfig.textCompare = e;
                 return newArr;
             });
-            setDataMetrics((prev) => {
-                return {
-                    ...prev,
-                    textValue: e,
-                };
-            });
         },
-        [setListTabs, idConfig, setDataMetrics, data]
+        [setListTabs, idConfig, data]
     );
 
     const handleStacked = useCallback(
@@ -492,31 +467,11 @@ export const ChartConfig: React.FC<{
             idConfig > -1 &&
             (config.xaxis.value || config.selectedChart === "metric")
         ) {
-            if (config.selectedChart === "metric")
-                setDataMetrics({
-                    value:
-                        data && data?.length > 0
-                            ? data[0][config.metricConfig.value]
-                            : null,
-                    compareValue:
-                        data && data?.length > 0
-                            ? data[0][config.metricConfig.compareValue]
-                            : null,
-                    textValue: config.metricConfig.textCompare,
-                });
-
             const { dataX, dataY } = getDataSeries(config, data);
             setDataX(dataX);
             setDataSeries(dataY);
         }
-    }, [
-        idConfig,
-        JSON.stringify(config),
-        config,
-        setDataX,
-        setDataSeries,
-        setDataMetrics,
-    ]);
+    }, [idConfig, JSON.stringify(config), config, setDataX, setDataSeries]);
 
     return (
         <div className="relative h-full w-full">
@@ -541,7 +496,7 @@ export const ChartConfig: React.FC<{
                         />
                     )}
                     {config.selectedChart === "metric" && (
-                        <CardMetrics config={config} data={dataMetrics} />
+                        <CardMetrics config={config} result={data ?? []} />
                     )}
                 </Card>
                 <Card className="h-full w-[30%] flex-none rounded-none p-4">
