@@ -21,10 +21,10 @@ import type { IPropsComboBoxOrder } from "@/types";
 
 export const Combobox: React.FC<IPropsComboBoxOrder> = ({
     orderList,
-    defaultValue,
+    value,
+    setValue,
 }) => {
     const [open, setOpen] = React.useState(false);
-    const [value, setValue] = React.useState(defaultValue);
 
     return (
         <Popover open={open} onOpenChange={setOpen}>

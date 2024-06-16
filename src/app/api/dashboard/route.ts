@@ -5,27 +5,36 @@ import { createClient } from "@/lib/supabase/server";
 
 export async function POST(
     req: NextRequest
-): Promise<NextResponse<ResponseData<ITableDashboard[] | null>>> {
+): Promise<
+    NextResponse<ResponseData<ITableDashboard[] | null> & { total: number }>
+> {
     const client = createClient();
     const variants = {
         recently_created: "updated_at",
         most_loves: "likes",
         most_views: "views",
     };
-    const body: { variant: string } = await req.json();
+    const body: { variant: string; from: string; to: string } =
+        await req.json();
 
-    const { error, data: d } = await client
+    const {
+        error,
+        data: d,
+        count,
+    } = await client
         .from("dashboard")
-        .select("*, profiles (username)")
+        .select("*, profiles (username)", { count: "exact" })
         .order(variants[body.variant as keyof typeof variants], {
             ascending: false,
-        });
-
+        })
+        .range(Number(body.from), Number(body.to))
+        .limit(40);
     return NextResponse.json(
         {
             message: error ? error.message : "",
             data: d,
             isError: error ? true : false,
+            total: count ?? 0,
         },
         {
             status: 200,

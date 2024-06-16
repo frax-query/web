@@ -23,23 +23,16 @@ export const ModalSearch = () => {
     const { searchDashboard } = useDiscovery();
 
     useEffect(() => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-
         (async () => {
             if (debouncedValue) {
-                const res = await searchDashboard(debouncedValue, signal);
+                const res = await searchDashboard(debouncedValue);
                 setListDashboard(res);
-            }
+            } else setListDashboard([]);
         })();
-
-        return () => {
-            controller.abort();
-        };
     }, [debouncedValue]);
 
     return (
-        <Dialog>
+        <Dialog onOpenChange={() => setListDashboard([])}>
             <DialogTrigger asChild>
                 <Button variant="ghost">Search Dashboard</Button>
             </DialogTrigger>

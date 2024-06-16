@@ -56,18 +56,43 @@ export async function updateSession(request: NextRequest) {
     const {
         data: { user },
     } = await supabase.auth.getUser();
+    const nextUrl = request.nextUrl.pathname;
+    const splitPathname = nextUrl.split("/");
+    if (splitPathname.length === 3 && splitPathname[1] === "dashboard") {
+        const { error } = await supabase.rpc("increase_dashboard_views", {
+            slug: splitPathname[2],
+        });
+        if (error) {
+            const isHome = nextUrl === "/";
+            const resp = isHome
+                ? NextResponse.next()
+                : NextResponse.redirect(new URL("/", request.url));
+            resp.cookies.delete("user");
+            return resp;
+        }
+    }
+
     if (user) {
         response.cookies.set({
             name: "user",
             value: JSON.stringify(user),
         });
     } else {
-        const isHome = request.nextUrl.pathname === "/";
-        const response = isHome
-            ? NextResponse.next()
-            : NextResponse.redirect(new URL("/", request.url));
-        response.cookies.delete("user");
-        return response;
+        const blackList = ["query", "dashboard"];
+        if (
+            nextUrl.split("/").length === 2 &&
+            blackList.includes(nextUrl.split("/")[1])
+        ) {
+            const isHome = nextUrl === "/";
+            const resp = isHome
+                ? NextResponse.next()
+                : NextResponse.redirect(new URL("/", request.url));
+            resp.cookies.delete("user");
+            return resp;
+        }
+        const resp = NextResponse.next();
+        resp.cookies.delete("user");
+        return resp;
     }
     return response;
 }

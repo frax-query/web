@@ -2,10 +2,13 @@
 
 import CardDashboard from "@/components/discover/card-dashboard";
 import { Combobox } from "@/components/discover/combobox";
+import { ModalLogin } from "@/components/discover/modal-login";
 import ModalSearch from "@/components/discover/modal-search";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/hooks/store/authStore";
 import { useDiscovery } from "@/hooks/useDiscovery";
+import Link from "next/link";
+import { useIsClient } from "usehooks-ts";
 
 const orderList = [
     {
@@ -25,7 +28,19 @@ const orderList = [
 export default function Home() {
     const user = useAuthStore((state) => state.user);
 
-    const { loading, listDashboard, error } = useDiscovery();
+    const {
+        loading,
+        listDashboard,
+        error,
+        view,
+        totalDashborads,
+        page,
+        limit,
+        getAllDashboard,
+        setView,
+    } = useDiscovery();
+
+    const isClient = useIsClient();
 
     return (
         <main>
@@ -43,7 +58,16 @@ export default function Home() {
                         Dashboard
                     </p>
                     <div className="mt-4 flex items-center justify-center gap-1">
-                        {user && <Button variant="outline">Query now</Button>}
+                        {isClient && !user && (
+                            <ModalLogin>
+                                <Button variant="outline">Query now</Button>
+                            </ModalLogin>
+                        )}
+                        {user && (
+                            <Link href={`/query`}>
+                                <Button variant="outline">Query now</Button>
+                            </Link>
+                        )}
                         <ModalSearch />
                     </div>
                 </div>
@@ -51,11 +75,31 @@ export default function Home() {
                     <div>
                         <Combobox
                             orderList={orderList}
-                            defaultValue="recently_created"
+                            value={view}
+                            setValue={setView}
                         />
                     </div>
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    {listDashboard.map((item) => {
+                        return (
+                            <CardDashboard
+                                key={`dashboard-${item.title_slug}`}
+                                loading={false}
+                                data={{
+                                    date: new Date(
+                                        item.updated_at
+                                    ).toDateString(),
+                                    description: item.description,
+                                    likes: Number(item.likes),
+                                    slug: item.title_slug,
+                                    title: item.title,
+                                    username: `@` + item.profiles.username,
+                                    views: Number(item.views),
+                                }}
+                            />
+                        );
+                    })}
                     {loading &&
                         Array(50)
                             .fill(0)
@@ -76,28 +120,17 @@ export default function Home() {
                                     />
                                 );
                             })}
-                    {!loading &&
-                        !!error &&
-                        listDashboard.map((item) => {
-                            return (
-                                <CardDashboard
-                                    key={`dashboard-${item.title_slug}`}
-                                    loading={false}
-                                    data={{
-                                        date: new Date(
-                                            item.updated_at
-                                        ).toDateString(),
-                                        description: item.description,
-                                        likes: Number(item.likes),
-                                        slug: item.title_slug,
-                                        title: item.title,
-                                        username: `@` + item.profiles.username,
-                                        views: Number(item.views),
-                                    }}
-                                />
-                            );
-                        })}
                 </div>
+                {!loading &&
+                    !error &&
+                    listDashboard.length < totalDashborads && (
+                        <div
+                            className="flex items-center justify-center"
+                            onClick={() => getAllDashboard(page, view, limit)}
+                        >
+                            <Button variant="outline">Load more</Button>
+                        </div>
+                    )}
             </div>
         </main>
     );

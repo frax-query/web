@@ -1,4 +1,5 @@
 import type { IDataDashboard, ITableDashboard, ResponseData } from "@/types";
+import type { Dispatch, SetStateAction } from "react";
 import { useCallback, useEffect, useState } from "react";
 
 interface IHooksDetailDashboard {
@@ -11,7 +12,10 @@ interface IHooksDetailDashboard {
     title: string;
     description: string;
     id: string;
+    views: number;
+    likes: number;
     getDashboard: () => Promise<void>;
+    setLikes: Dispatch<SetStateAction<number>>;
 }
 
 const defaultLayouts = {
@@ -35,6 +39,8 @@ export const useDetailDashboard: (
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [id, setId] = useState("");
+    const [likes, setLikes] = useState(0);
+    const [views, setViews] = useState(0);
 
     const getDashboard = useCallback(async () => {
         if (!dashboard_id) return;
@@ -64,6 +70,8 @@ export const useDetailDashboard: (
                     });
                 });
                 setLayouts(layout);
+                setViews(Number(res.data[0].views));
+                setLikes(Number(res.data[0].likes));
                 setData(JSON.parse(res.data[0].data));
                 setUsername(res.data[0].profiles.username);
                 setFullname(res.data[0].profiles.full_name);
@@ -93,6 +101,9 @@ export const useDetailDashboard: (
         title,
         description,
         id,
+        views,
+        likes,
         getDashboard,
+        setLikes,
     };
 };

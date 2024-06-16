@@ -1,4 +1,5 @@
 "use client";
+
 import ThemeChanger from "@/components/theme-toggle";
 import { ModalLogin } from "./discover/modal-login";
 import { Logo } from "./logo";
@@ -18,6 +19,8 @@ import { useToast } from "./ui/use-toast";
 import { useAuthStore } from "@/hooks/store/authStore";
 import * as Cookies from "js-cookie";
 import { usePathname } from "next/navigation";
+import { Button } from "./ui/button";
+import { useIsClient } from "usehooks-ts";
 
 export const Header = () => {
     const setUser = useAuthStore((state) => state.setUser);
@@ -30,6 +33,8 @@ export const Header = () => {
             setUser(user ? JSON.parse(user) : null);
         })();
     }, []);
+
+    const isClient = useIsClient();
     return (
         <div className="sticky top-0 z-40 h-[64px] border-b border-zinc-200 bg-background dark:border-zinc-800">
             <div className="mx-auto h-full max-w-[1800px] px-4">
@@ -54,10 +59,34 @@ export const Header = () => {
                                 </Link>
                             </div>
                         )}
+                        {isClient && !user && (
+                            <ModalLogin key={0}>
+                                <div className="cursor-pointer text-sm">
+                                    Query
+                                </div>
+                            </ModalLogin>
+                        )}
+                        {isClient && !user && (
+                            <ModalLogin key={1}>
+                                <div className="cursor-pointer text-sm">
+                                    Dashboard
+                                </div>
+                            </ModalLogin>
+                        )}
                     </div>
                     <div className="flex items-center gap-4 text-sm">
                         {!!user && <ProfileAccount />}
-                        {!user && <ModalLogin />}
+                        {isClient && !user && (
+                            <ModalLogin key={3}>
+                                <Button
+                                    variant="default"
+                                    size="sm"
+                                    className="max-h-7"
+                                >
+                                    Login
+                                </Button>
+                            </ModalLogin>
+                        )}
                         <ThemeChanger />
                     </div>
                 </div>
@@ -93,21 +122,27 @@ const ProfileAccount = () => {
                     </AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="text-sm">
+            <DropdownMenuContent align="end" className="min-w-[200px] text-sm">
                 <DropdownMenuLabel>
                     <div className="flex flex-col space-y-1">
-                        <div className="text-sm font-medium leading-none">
-                            {user?.user_metadata?.username}
+                        <div className="text-sm font-medium capitalize leading-none">
+                            {user?.user_metadata?.full_name}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                            {user?.email}
+                            @{user?.user_metadata?.username}
                         </div>
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Create Query</DropdownMenuItem>
-                <DropdownMenuItem>Create Dashboard</DropdownMenuItem>
+                <Link href={`/profile/${user?.user_metadata?.username}`}>
+                    <DropdownMenuItem>Profile</DropdownMenuItem>
+                </Link>
+                <Link href={`/query`}>
+                    <DropdownMenuItem>Create Query</DropdownMenuItem>
+                </Link>
+                <Link href={`/dashboard`}>
+                    <DropdownMenuItem>Create Dashboard</DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => handleLogout()}>
                     Log out

@@ -15,7 +15,6 @@ export async function POST(
         .select("*")
         .ilike("title", `%${body.search}%`)
         .order("updated_at", { ascending: false });
-
     return NextResponse.json(
         {
             message: error ? error.message : "",

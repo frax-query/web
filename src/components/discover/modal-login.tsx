@@ -27,7 +27,9 @@ import { VerifySignUp } from "../auth/verify-signup";
 import { VerifyPasswordRecovery } from "../auth/verify-password-recovery";
 import { ChangePassword } from "../auth/change-password";
 
-export const ModalLogin = () => {
+export const ModalLogin: React.FC<{ children: React.ReactNode }> = ({
+    children,
+}) => {
     const [section, setSection] = useState<string>("login");
     const [email, setEmail] = useState<string>("");
     const matches = useMediaQuery("(min-width: 768px)");
@@ -39,11 +41,7 @@ export const ModalLogin = () => {
                     setEmail("");
                 }}
             >
-                <DialogTrigger asChild>
-                    <Button variant="default" size="sm" className="max-h-7">
-                        Login
-                    </Button>
-                </DialogTrigger>
+                <DialogTrigger asChild>{children}</DialogTrigger>
                 <DialogContent className="w-full max-w-[400px]">
                     <DialogHeader>
                         <DialogTitle>

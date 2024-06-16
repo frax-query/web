@@ -8,23 +8,35 @@ export const useDiscovery = () => {
         (ITableDashboard & { profiles: { username: string } })[]
     >([]);
     const [view, setView] = useState("recently_created");
+    const [totalDashborads, setTotalDashboards] = useState(0);
+    const [page, setPage] = useState(0);
+    const limit = 39;
 
     const getAllDashboard = useCallback(
-        async (variant: string, signal: AbortSignal | null | undefined) => {
+        async (page: number, view: string, limit: number) => {
             try {
                 setLoading(true);
                 setError("");
                 const raw = await fetch("/api/dashboard", {
                     method: "POST",
-                    body: JSON.stringify({ variant: variant }),
-                    signal: signal,
+                    body: JSON.stringify({
+                        variant: view,
+                        from: page * limit,
+                        to: page * limit + limit,
+                    }),
                 });
                 const res: ResponseData<
                     | (ITableDashboard & { profiles: { username: string } })[]
                     | null
-                > = await raw.json();
+                > & { total: number } = await raw.json();
                 if (res.data) {
-                    setListDashboard(res.data);
+                    setListDashboard((prev) => {
+                        const newArr = [...prev];
+                        if (res.data) return [...newArr, ...res.data];
+                        else return newArr;
+                    });
+                    setTotalDashboards(res.total);
+                    setPage(page + 1);
                 } else setError(res.message);
             } catch (error) {
                 if (error instanceof Error) setError(error.message);
@@ -35,42 +47,39 @@ export const useDiscovery = () => {
         []
     );
 
-    const searchDashboard = useCallback(
-        async (search: string, signal: AbortSignal | null | undefined) => {
-            try {
-                const raw = await fetch("/api/dashboard/search", {
-                    method: "POST",
-                    body: JSON.stringify({ search: search }),
-                    signal: signal,
-                });
-                const res: ResponseData<ITableDashboard[] | null> =
-                    await raw.json();
-                if (res.data) {
-                    return res.data;
-                } else return [];
-            } catch (error) {
-                console.log(error);
-                return [];
-            }
-        },
-        []
-    );
+    const searchDashboard = useCallback(async (search: string) => {
+        try {
+            const raw = await fetch("/api/dashboard/search", {
+                method: "POST",
+                body: JSON.stringify({ search: search }),
+            });
+            const res: ResponseData<ITableDashboard[] | null> =
+                await raw.json();
+            if (res.data) {
+                return res.data;
+            } else return [];
+        } catch (error) {
+            console.log(error);
+            return [];
+        }
+    }, []);
 
     useEffect(() => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-        getAllDashboard(view, signal);
-
-        return () => {
-            controller.abort();
-        };
-    }, [view]);
+        setPage(0);
+        getAllDashboard(0, view, limit);
+        setListDashboard([]);
+    }, [view, limit]);
 
     return {
         error,
         listDashboard,
         loading,
+        totalDashborads,
+        page,
+        view,
+        limit,
         setView,
         searchDashboard,
+        getAllDashboard,
     };
 };

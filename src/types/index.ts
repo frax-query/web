@@ -24,7 +24,8 @@ export interface IOrderListItem {
 
 export interface IPropsComboBoxOrder {
     orderList: IOrderListItem[];
-    defaultValue: string;
+    setValue: React.Dispatch<React.SetStateAction<string>>;
+    value: string;
 }
 import type * as echarts from "echarts/core";
 import type {
@@ -168,4 +169,18 @@ export interface ITableDashboard {
     title_slug: string;
     views: string;
     likes: string;
+}
+
+export interface ILikesDashboard {
+    user_id: string;
+    dashboard_id: string;
+    updated_at: string;
+}
+
+export interface IProfile {
+    id: string;
+    username: string;
+    full_name: string;
+    twitter: string | null;
+    github: string | null;
 }

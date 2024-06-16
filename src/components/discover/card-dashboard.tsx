@@ -39,7 +39,11 @@ export const CardDashboard: React.FC<{ loading: boolean; data: ICard }> = ({
                     <p className="mb-2 truncate font-bold">{data.title}</p>
                     <p className="mb-2 text-xs text-muted-foreground">
                         {data.date}{" "}
-                        <span className="text-primary">{data.username}</span>
+                        <Link href={`/profile/${data.username}`}>
+                            <span className="text-primary">
+                                {data.username}
+                            </span>
+                        </Link>
                     </p>
                     <div className="mb-2 flex items-center gap-2">
                         <p className="flex items-center gap-1 text-xs">
@@ -54,16 +58,16 @@ export const CardDashboard: React.FC<{ loading: boolean; data: ICard }> = ({
                             <span>{data.views}</span>
                         </p>
                     </div>
-                    <p className="line-clamp-1 h-[20px] text-xs text-muted-foreground">
+                    <p className="line-clamp-1 h-[18px] text-xs text-muted-foreground">
                         {data.description}
                     </p>
                 </CardContent>
             )}
             {!loading && (
-                <CardFooter className="p-4">
+                <CardFooter className="px-4">
                     <Link
                         href={`/dashboard/${data.slug}`}
-                        className="flex items-center gap-1 text-primary"
+                        className="flex items-center gap-1 text-sm text-primary"
                     >
                         Read More
                         <ArrowRight size={18} />
@@ -79,7 +83,7 @@ export const CardDashboard: React.FC<{ loading: boolean; data: ICard }> = ({
                 </CardContent>
             )}
             {loading && (
-                <CardFooter className="p-4">
+                <CardFooter className="px-4">
                     <Skeleton className="h-[20px] w-[25%]" />
                 </CardFooter>
             )}
