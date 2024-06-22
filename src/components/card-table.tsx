@@ -14,13 +14,7 @@ import {
 interface IProps {
     title: string;
     data: QueryResult | null;
-    columns: {
-        key: string;
-        name: string;
-        width?: number | undefined;
-        resizable?: boolean | undefined;
-        frozen?: boolean | undefined;
-    }[];
+    columns: string[];
 }
 export const CardTable: React.FC<IProps> = ({ title, columns, data }) => {
     return (
@@ -29,9 +23,7 @@ export const CardTable: React.FC<IProps> = ({ title, columns, data }) => {
             <TableHeader>
                 <TableRow>
                     {columns.map((item) => {
-                        return (
-                            <TableHead key={item.name}>{item.name}</TableHead>
-                        );
+                        return <TableHead key={item}>{item}</TableHead>;
                     })}
                 </TableRow>
             </TableHeader>
@@ -42,7 +34,7 @@ export const CardTable: React.FC<IProps> = ({ title, columns, data }) => {
                             {columns.map((x, index) => {
                                 return (
                                     <TableCell key={`row-${x}-${index}`}>
-                                        {item[x.name]}
+                                        {item[x]}
                                     </TableCell>
                                 );
                             })}

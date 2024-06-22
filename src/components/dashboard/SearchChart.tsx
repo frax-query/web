@@ -9,6 +9,7 @@ import {
     LineChartIcon,
     PieChartIcon,
     ScatterChartIcon,
+    Table2Icon,
 } from "lucide-react";
 import { useState } from "react";
 import {
@@ -57,6 +58,12 @@ const charts: IListCharts[] = [
         value: "metric",
         icon: <CaseSensitiveIcon className="mr-2 h-4 w-4" />,
     },
+    {
+        id: 6,
+        name: "Table",
+        value: "table",
+        icon: <Table2Icon className="mr-2 h-4 w-4" />,
+    },
 ];
 
 interface ISearchChart {
@@ -90,10 +97,10 @@ export const SearchChart: React.FC<ISearchChart> = ({
                     <CommandEmpty>No results found.</CommandEmpty>
                     {listCharts.length > 0 && (
                         <CommandGroup heading="List Charts">
-                            {listCharts.map((item) => {
+                            {listCharts.map((item, index) => {
                                 return (
                                     <CommandItem
-                                        key={item.id}
+                                        key={item.id + index}
                                         className="!py-1.5"
                                         onSelect={() => {
                                             handleAddCard(
@@ -120,6 +127,15 @@ export const SearchChart: React.FC<ISearchChart> = ({
                                             (JSON.parse(item.config) as ICharts)
                                                 .title.value
                                         }
+                                        <span className="hidden">
+                                            {` ${
+                                                (
+                                                    JSON.parse(
+                                                        item.config
+                                                    ) as ICharts
+                                                ).selectedChart
+                                            }`}
+                                        </span>
                                     </CommandItem>
                                 );
                             })}

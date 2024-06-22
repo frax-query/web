@@ -511,7 +511,7 @@ export const ChartConfig: React.FC<{
                         <CardTable
                             title={config.title.value}
                             data={data}
-                            columns={columns}
+                            columns={columns.map((x) => x.name)}
                         />
                     )}
                 </Card>

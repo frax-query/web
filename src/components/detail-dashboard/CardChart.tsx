@@ -16,6 +16,7 @@ import { CardMetrics } from "../card-metrics";
 import { Card } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 import ReactECharts from "echarts-for-react";
+import { CardTable } from "../card-table";
 
 interface ICardChart {
     id: string;
@@ -109,6 +110,7 @@ export const CardChart: React.FC<ICardChart> = ({ id, query_id }) => {
                     notation: "compact",
                 }).format(Number(v));
             };
+            console.log(config.selectedChart);
             const { dataX, dataY } = getDataSeries(config, data);
             setDataX(dataX);
             setDataSeries(dataY);
@@ -148,7 +150,7 @@ export const CardChart: React.FC<ICardChart> = ({ id, query_id }) => {
 
     return (
         <Card className="relative h-full w-full p-4">
-            {config.selectedChart !== "metric" && (
+            {!["metric", "table"].includes(config.selectedChart) && (
                 <ReactECharts
                     echarts={echarts}
                     option={getOptionsChart}
@@ -165,6 +167,15 @@ export const CardChart: React.FC<ICardChart> = ({ id, query_id }) => {
             )}
             {config.selectedChart === "metric" && (
                 <CardMetrics config={config} result={data ?? []} />
+            )}
+            {config.selectedChart === "table" && (
+                <CardTable
+                    title={config.title.value}
+                    data={data ?? []}
+                    columns={
+                        data && data.length > 0 ? Object.keys(data[0]) : []
+                    }
+                />
             )}
         </Card>
     );
