@@ -114,7 +114,14 @@ export type IDataSeries = echarts.ComposeOption<
     BarSeriesOption | LineSeriesOption | ScatterSeriesOption | PieSeriesOption
 >[];
 
-export type IAllCharts = "bar" | "area" | "line" | "scatter" | "pie" | "metric";
+export type IAllCharts =
+    | "bar"
+    | "area"
+    | "line"
+    | "scatter"
+    | "pie"
+    | "metric"
+    | "table";
 
 export interface IListCharts {
     id: number;

@@ -152,7 +152,7 @@ export const ResultAndChartSection: React.FC<{
         });
     }, [saveChart, idQuery, activeTab, setListTabs, listTabs]);
     return (
-        <div className="h-full">
+        <div className="h-full max-h-full max-w-full">
             <ScrollArea className="grid w-full whitespace-nowrap border-b">
                 <div className="flex w-max items-center">
                     <div

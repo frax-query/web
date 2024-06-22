@@ -57,6 +57,19 @@ export const schema_tables: NestedObject = {
             "value",
         ],
         erc20: ["decimals", "token_address", "name", "symbol"],
+        token_trasfners: [
+            "transaction_hash",
+            "from_address",
+            "to_address",
+            "raw_amount",
+            "amount",
+            "token_address",
+            "token_name",
+            "token_symbol",
+            "token_decimals",
+            "index",
+            "transaction_index",
+        ],
     },
 };
 

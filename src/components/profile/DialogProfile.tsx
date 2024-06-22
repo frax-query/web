@@ -46,16 +46,17 @@ export const DialogProfile: React.FC<IEditProfile> = ({
             .max(20, "Fullname is too long"),
         github: z
             .string()
-            .regex(/^[a-z0-9]+$/, "Must be alphanumeric and lowercase")
+            .regex(
+                /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i,
+                "Wrong github username"
+            )
             .min(3, "Username is too short")
             .max(20, "Username is too long")
             .optional()
             .or(z.literal("")),
         twitter: z
             .string()
-            .regex(/^[a-z0-9]+$/, "Must be alphanumeric and lowercase")
-            .min(3, "Username is too short")
-            .max(20, "Username is too long")
+            .regex(/^[a-zA-Z0-9_]{1,15}$/, "Wrong twitter username")
             .optional()
             .or(z.literal("")),
     });
