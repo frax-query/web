@@ -191,3 +191,24 @@ export interface IProfile {
     twitter: string | null;
     github: string | null;
 }
+
+export interface NodeData {
+    data: ITokenTransfers;
+    isAddress: boolean;
+    id: string;
+}
+
+export interface ITokenTransfers {
+    amount: number;
+    from_address: string;
+    index: number;
+    raw_amount: number;
+    timestamp: string;
+    to_address: string;
+    token_address: string;
+    token_decimals: number;
+    token_name: string;
+    token_symbol: string;
+    transaction_hash: string;
+    transaction_index: number;
+}

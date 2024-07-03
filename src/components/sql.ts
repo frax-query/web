@@ -70,6 +70,14 @@ export const schema_tables: NestedObject = {
             "index",
             "transaction_index",
         ],
+        token_prices: [
+            "timestamp",
+            "name",
+            "token_address",
+            "symbol",
+            "price",
+            "source",
+        ],
     },
 };
 
