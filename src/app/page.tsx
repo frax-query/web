@@ -54,8 +54,8 @@ export default function Home() {
                         Network
                     </h3>
                     <p className="text-lg text-muted-foreground">
-                        Comprehensive Analysis on Our Advanced Discovery
-                        Dashboard
+                        Uncover Insights, Visualize Trends, and Navigate to The
+                        Fraxtal Ecosystem
                     </p>
                     <div className="mt-4 flex items-center justify-center gap-1">
                         {isClient && !user && (
