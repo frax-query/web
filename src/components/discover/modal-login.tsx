@@ -1,7 +1,6 @@
 "use client";
 
 import { Logo } from "../logo";
-import { Button } from "../ui/button";
 import {
     Dialog,
     DialogContent,
@@ -83,11 +82,7 @@ export const ModalLogin: React.FC<{ children: React.ReactNode }> = ({
     } else {
         return (
             <Drawer onOpenChange={() => setSection("login")}>
-                <DrawerTrigger asChild>
-                    <Button variant="default" size="sm" className="max-h-7">
-                        Login
-                    </Button>
-                </DrawerTrigger>
+                <DrawerTrigger asChild>{children}</DrawerTrigger>
                 <DrawerContent className="w-full p-4">
                     <DrawerHeader>
                         <DrawerTitle>

@@ -14,13 +14,13 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
 import { useEffect } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { useToast } from "./ui/use-toast";
 import { useAuthStore } from "@/hooks/store/authStore";
 import * as Cookies from "js-cookie";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import { useIsClient } from "usehooks-ts";
+import type { ResponseData } from "@/types";
 
 export const Header = () => {
     const setUser = useAuthStore((state) => state.setUser);
@@ -100,13 +100,21 @@ const ProfileAccount = () => {
     const user = useAuthStore((state) => state.user);
 
     const handleLogout = async () => {
-        const client = createClient();
-        const { error } = await client.auth.signOut();
+        let error = "";
+        try {
+            const raw = await fetch("/api/user/logout", {
+                method: "POST",
+            });
+            const res: ResponseData<null> = await raw.json();
+            if (res.isError) error = res.message;
+        } catch (err) {
+            if (err instanceof Error) error = err.message;
+        }
         if (error) {
             toast({
                 variant: "destructive",
-                title: error.code,
-                description: error.message,
+                title: "Logout Failed",
+                description: error,
             });
             return;
         }
