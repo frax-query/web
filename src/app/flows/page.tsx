@@ -19,8 +19,8 @@ import ReactFlow, {
     useNodesState,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import dagre from "dagre";
-import type { Node } from "reactflow";
+// import dagre from "dagre";
+// import type { Node } from "reactflow";
 
 const nodeTypes: NodeTypes = {
     custom: CustomNode,
@@ -41,38 +41,38 @@ const edgeTypes: EdgeTypes = {
 //     a.click();
 // }
 
-export const getLayoutedElements = (nodes: Node[], edges: Edge[]) => {
-    const dagreGraph = new dagre.graphlib.Graph();
-    dagreGraph.setDefaultEdgeLabel(() => ({}));
+// export const getLayoutedElements = (nodes: Node[], edges: Edge[]) => {
+//     const dagreGraph = new dagre.graphlib.Graph();
+//     dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-    const nodeWidth = 300;
-    const nodeHeight = 100;
-    dagreGraph.setGraph({ rankdir: "LR" });
+//     const nodeWidth = 300;
+//     const nodeHeight = 100;
+//     dagreGraph.setGraph({ rankdir: "LR" });
 
-    nodes.forEach((node) => {
-        dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
-    });
+//     nodes.forEach((node) => {
+//         dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+//     });
 
-    edges.forEach((edge) => {
-        dagreGraph.setEdge(edge.source, edge.target);
-    });
+//     edges.forEach((edge) => {
+//         dagreGraph.setEdge(edge.source, edge.target);
+//     });
 
-    dagre.layout(dagreGraph);
+//     dagre.layout(dagreGraph);
 
-    nodes.forEach((node) => {
-        const nodeWithPosition = dagreGraph.node(node.id);
-        node.targetPosition = Position.Left;
-        node.sourcePosition = Position.Right;
-        node.position = {
-            x: nodeWithPosition.x - nodeWidth / 2,
-            y: nodeWithPosition.y - nodeHeight / 2,
-        };
+//     nodes.forEach((node) => {
+//         const nodeWithPosition = dagreGraph.node(node.id);
+//         node.targetPosition = Position.Left;
+//         node.sourcePosition = Position.Right;
+//         node.position = {
+//             x: nodeWithPosition.x - nodeWidth / 2,
+//             y: nodeWithPosition.y - nodeHeight / 2,
+//         };
 
-        return node;
-    });
+//         return node;
+//     });
 
-    return { nodes, edges };
-};
+//     return { nodes, edges };
+// };
 
 export default function Flows() {
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
@@ -88,9 +88,9 @@ export default function Flows() {
     };
 
     const autoFlow = () => {
-        const d = getLayoutedElements(nodes, edges);
-        setNodes([...d.nodes]);
-        setEdges([...d.edges]);
+        // const d = getLayoutedElements(nodes, edges);
+        // setNodes([...d.nodes]);
+        // setEdges([...d.edges]);
     };
 
     const addNodes = (
