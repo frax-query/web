@@ -16,11 +16,12 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useToast } from "./ui/use-toast";
 import { useAuthStore } from "@/hooks/store/authStore";
-import * as Cookies from "js-cookie";
+// import * as Cookies from "js-cookie";
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import { useIsClient } from "usehooks-ts";
 import type { ResponseData } from "@/types";
+import { createClient } from "@/lib/supabase/client";
 
 export const Header = () => {
     const setUser = useAuthStore((state) => state.setUser);
@@ -29,8 +30,9 @@ export const Header = () => {
 
     useEffect(() => {
         (async () => {
-            const user = Cookies.default.get("user");
-            setUser(user ? JSON.parse(user) : null);
+            const client = createClient();
+            const { data } = await client.auth.getSession();
+            setUser(data.session?.user ?? null);
         })();
     }, []);
 

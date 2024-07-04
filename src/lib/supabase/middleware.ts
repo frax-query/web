@@ -73,10 +73,10 @@ export async function updateSession(request: NextRequest) {
     }
 
     if (user) {
-        response.cookies.set({
-            name: "user",
-            value: JSON.stringify(user),
-        });
+        // response.cookies.set({
+        //     name: "user",
+        //     value: JSON.stringify(user),
+        // });
     } else {
         const blackList = ["query", "dashboard"];
         if (
